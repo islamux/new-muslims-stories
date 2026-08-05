@@ -9,7 +9,7 @@ age: null
 country: "Spain"
 previousReligion: "None"
 profilePhoto: "/images/stilla.webp"
-featured: false
+featured: true
 ---
 
 ## My Life Before Islam

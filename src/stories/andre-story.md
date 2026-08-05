@@ -9,7 +9,7 @@ age: 38
 country: "Brazil"
 previousReligion: "Christianity"
 profilePhoto: "/images/andre.webp"
-featured: false
+featured: true
 ---
 
 ## My Life Before Islam

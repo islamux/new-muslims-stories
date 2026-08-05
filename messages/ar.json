@@ -19,6 +19,7 @@
     "contactCenters": "اتصل بالمراكز الإسلامية",
     "dailyStoryTitle": "عنوان القصة اليومية المميزة",
     "dailyStoryExcerpt": "مقتطف موجز من قصة اليوم الملهمة.",
+    "allStories": "جميع القصص",
     "footerCopyright": "{year} اكتشف الإسلام. جميع الحقوق محفوظة."
   },
   "Hero": {
@@ -37,6 +38,7 @@
     "filterAll": "جميع البلدان",
     "filterByPreviousReligion": "تصفية حسب الديانة السابقة",
     "searchStories": "ابحث عن القصص...",
+    "noStories": "لا توجد قصص.",
     "storyOfTheDay": "قصة اليوم",
     "learnMore": "اعرف المزيد",
     "yearsOldFrom": "{age} سنة، من {country}",
@@ -51,5 +53,20 @@
     "theme": "المظهر",
     "light": "فاتح",
     "dark": "داكن"
+  },
+  "NotFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "تعذّر العثور على الصفحة أو القصة التي تبحث عنها.",
+    "backHome": "العودة إلى القصص"
+  },
+  "Error": {
+    "title": "حدث خطأ ما",
+    "description": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+    "tryAgain": "حاول مرة أخرى"
+  },
+  "Nav": {
+    "brand": "قصص المسلمين الجدد",
+    "stories": "القصص",
+    "menu": "القائمة"
   }
 }

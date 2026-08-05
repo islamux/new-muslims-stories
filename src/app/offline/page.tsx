@@ -1,15 +1,78 @@
 'use client';
 
+import { useSyncExternalStore } from 'react';
 import Link from 'next/link';
 
+type OfflineLocale = 'en' | 'ar';
+
+type OfflineStrings = {
+  dir: 'ltr' | 'rtl';
+  home: string;
+  title: string;
+  description: string;
+  availableTitle: string;
+  availableDescription: string;
+  offlineEnabled: string;
+  tryAgain: string;
+  goHome: string;
+  tip: string;
+};
+
+const STRINGS: Record<OfflineLocale, OfflineStrings> = {
+  en: {
+    dir: 'ltr',
+    home: '/en',
+    title: "You're Offline",
+    description:
+      "Don't worry! You can still read your cached stories. Check your internet connection and try again.",
+    availableTitle: 'Available Offline',
+    availableDescription:
+      "Stories you've previously viewed are available for reading without an internet connection.",
+    offlineEnabled: 'Offline reading enabled',
+    tryAgain: 'Try Again',
+    goHome: 'Go to Homepage',
+    tip: 'Tip: Install this app to your home screen for easier offline access',
+  },
+  ar: {
+    dir: 'rtl',
+    home: '/ar',
+    title: 'أنت غير متصل',
+    description:
+      'لا تقلق! لا يزال بإمكانك قراءة القصص المحفوظة. تحقق من اتصالك بالإنترنت وحاول مرة أخرى.',
+    availableTitle: 'متاح دون اتصال',
+    availableDescription:
+      'القصص التي شاهدتها مسبقًا متاحة للقراءة دون اتصال بالإنترنت.',
+    offlineEnabled: 'القراءة دون اتصال مفعّلة',
+    tryAgain: 'حاول مرة أخرى',
+    goHome: 'الذهاب إلى الصفحة الرئيسية',
+    tip: 'نصيحة: ثبّت هذا التطبيق على شاشتك الرئيسية للوصول الأسهل دون اتصال',
+  },
+};
+
+function detectLocale(): OfflineLocale {
+  if (typeof navigator === 'undefined') return 'en';
+  return navigator.language.toLowerCase().startsWith('ar') ? 'ar' : 'en';
+}
+
+const emptySubscribe = () => () => {};
+
 export default function OfflinePage() {
+  const locale = useSyncExternalStore<OfflineLocale>(
+    emptySubscribe,
+    detectLocale,
+    () => 'en',
+  );
+  const s = STRINGS[locale];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-      <div className="text-center max-w-md">
-        {/* Offline Icon */}
+    <div
+      dir={s.dir}
+      className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-900"
+    >
+      <div className="max-w-md text-center">
         <div className="mb-8">
           <svg
-            className="w-24 h-24 mx-auto text-gray-400 dark:text-gray-600"
+            className="mx-auto h-24 w-24 text-gray-400 dark:text-gray-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -24,29 +87,20 @@ export default function OfflinePage() {
           </svg>
         </div>
 
-        {/* Title */}
-        <h1 className="text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
-          You&apos;re Offline
+        <h1 className="mb-4 font-heading text-3xl font-bold text-gray-900 dark:text-white">
+          {s.title}
         </h1>
 
-        {/* Description */}
-        <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-          Don&apos;t worry! You can still read your cached stories. Check your internet connection
-          and try again.
-        </p>
+        <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">{s.description}</p>
 
-        {/* Cached Stories Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Available Offline
+        <div className="mb-8 rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+          <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+            {s.availableTitle}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-            Stories you&apos;ve previously viewed are available for reading without an internet
-            connection.
-          </p>
+          <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">{s.availableDescription}</p>
           <div className="flex items-center justify-center text-green-600 dark:text-green-500">
             <svg
-              className="w-5 h-5 mr-2"
+              className="me-2 h-5 w-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -59,31 +113,27 @@ export default function OfflinePage() {
                 d="M5 13l4 4L19 7"
               />
             </svg>
-            <span className="text-sm font-medium">Offline reading enabled</span>
+            <span className="text-sm font-medium">{s.offlineEnabled}</span>
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="space-y-4">
           <button
             onClick={() => window.location.reload()}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
+            className="w-full bg-green-600 px-6 py-3 font-semibold text-white transition-colors duration-200 hover:bg-green-700"
           >
-            Try Again
+            {s.tryAgain}
           </button>
 
           <Link
-            href="/en"
-            className="block w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
+            href={s.home}
+            className="block w-full bg-gray-200 px-6 py-3 font-semibold text-gray-900 transition-colors duration-200 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
           >
-            Go to Homepage
+            {s.goHome}
           </Link>
         </div>
 
-        {/* Help Text */}
-        <p className="text-xs text-gray-500 dark:text-gray-500 mt-8">
-          Tip: Install this app to your home screen for easier offline access
-        </p>
+        <p className="mt-8 text-xs text-gray-500 dark:text-gray-500">{s.tip}</p>
       </div>
     </div>
   );

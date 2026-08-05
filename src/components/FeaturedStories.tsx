@@ -1,7 +1,6 @@
-// src/components/FeaturedStories.tsx
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import type { FeaturedStoriesProps } from '@/types';
 import Section from '@/components/ui/Section';
@@ -10,59 +9,73 @@ import StoryCard from '@/components/StoryCard';
 export default function FeaturedStories({ stories }: FeaturedStoriesProps) {
   const t = useTranslations('Index');
   const commonT = useTranslations('Common');
-  const [selectedCountry, setSelectedCountry] = useState<string>('');
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [query, setQuery] = useState('');
 
-  const countries = useMemo(() => {
-    const uniqueCountries = new Set<string>();
-    stories.forEach((story) => {
-      if (story.country) {
-        uniqueCountries.add(story.country);
-      }
+  const countries = useMemo(
+    () => Array.from(new Set(stories.map((s) => s.country).filter(Boolean))).sort(),
+    [stories],
+  );
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return stories.filter((s) => {
+      const matchesCountry = !selectedCountry || s.country === selectedCountry;
+      const matchesQuery =
+        !q ||
+        s.title.toLowerCase().includes(q) ||
+        s.firstName.toLowerCase().includes(q) ||
+        s.country.toLowerCase().includes(q);
+      return matchesCountry && matchesQuery;
     });
-    return Array.from(uniqueCountries).sort();
-  }, [stories]);
-
-  const filteredStories = useMemo(() => {
-    if (!selectedCountry) return stories;
-    return stories.filter((story) => story.country === selectedCountry);
-  }, [stories, selectedCountry]);
+  }, [stories, selectedCountry, query]);
 
   return (
     <Section id="stories" className="my-12">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h2 className="text-2xl font-semibold text-center text-coral-600 dark:text-coral-400">
-          {t('featuredStories')}
+      <div className="container mx-auto px-4">
+        <h2 className="mb-6 text-center font-heading text-2xl font-bold text-ink sm:text-3xl">
+          {t('allStories')}
         </h2>
-        <div className="flex items-center gap-2">
-          <label htmlFor="country-filter" className="text-sm text-gray-600 dark:text-gray-300">
-            {commonT('filterByCountry')}:
-          </label>
-          <select
-            id="country-filter"
-            value={selectedCountry}
-            onChange={(e) => setSelectedCountry(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-coral-500"
-          >
-            <option value="">{commonT('filterAll')}</option>
-            {countries.map((country) => (
-              <option key={country} value={country}>
-                {country}
-              </option>
+
+        <div className="mb-8 flex flex-col items-center justify-between gap-3 sm:flex-row">
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={commonT('searchStories')}
+            aria-label={commonT('searchStories')}
+            className="w-full rounded-md border border-line bg-surface px-3 py-2 font-sans text-sm text-ink placeholder:text-ink-soft focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 sm:max-w-xs"
+          />
+          <div className="flex items-center gap-2">
+            <label htmlFor="country-filter" className="font-sans text-sm text-ink-soft">
+              {commonT('filterByCountry')}:
+            </label>
+            <select
+              id="country-filter"
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+              className="rounded-md border border-line bg-surface px-3 py-2 font-sans text-sm text-ink focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+            >
+              <option value="">{commonT('filterAll')}</option>
+              {countries.map((country) => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {filtered.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((story) => (
+              <StoryCard key={story.slug} story={story} />
             ))}
-          </select>
-        </div>
+          </div>
+        ) : (
+          <p className="py-12 text-center font-sans text-ink-soft">{commonT('noStories')}</p>
+        )}
       </div>
-      {filteredStories.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredStories.map((story) => (
-            <StoryCard key={story.slug} story={story} />
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 dark:text-gray-400">
-          No stories found for the selected country.
-        </p>
-      )}
     </Section>
   );
 }

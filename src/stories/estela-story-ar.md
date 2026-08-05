@@ -9,7 +9,7 @@ age: null
 country: "إسبانيا"
 previousReligion: "لا دين"
 profilePhoto: "/images/stilla.webp"
-featured: false
+featured: true
 ---
 
 ## حياتي قبل الإسلام

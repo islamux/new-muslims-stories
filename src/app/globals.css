@@ -1,6 +1,48 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+
+/* Drive `dark:` variants from the .dark class set by next-themes (attribute="class"),
+   instead of the default prefers-color-scheme media query. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* ───────────────── Illuminated / Nur palette ───────────────── */
+
+  /* Emerald — primary brand */
+  --color-emerald-50: #ecf5ef;
+  --color-emerald-100: #d3e8dc;
+  --color-emerald-200: #a7d1b9;
+  --color-emerald-300: #71b591;
+  --color-emerald-400: #3e9968;
+  --color-emerald-500: #1e8c5a;
+  --color-emerald-600: #0f5c3e;
+  --color-emerald-700: #0c4a32;
+  --color-emerald-800: #0a3a28;
+  --color-emerald-900: #072a1d;
+  --color-emerald-950: #041a11;
+
+  /* Gilt — the single warm accent (manuscript illumination) */
+  --color-gilt-50: #fbf6e9;
+  --color-gilt-100: #f5e9c8;
+  --color-gilt-200: #ebd491;
+  --color-gilt-300: #dcba5a;
+  --color-gilt-400: #d4a85a;
+  --color-gilt-500: #b8893b;
+  --color-gilt-600: #9a7030;
+  --color-gilt-700: #7a5827;
+  --color-gilt-800: #5e431e;
+  --color-gilt-900: #433017;
+  --color-gilt-950: #2a1e0e;
+
+  /* Semantic surfaces & ink — theme-aware via .dark overrides below */
+  --color-surface: var(--surface);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+
+  /* ───────────────── Legacy scales (retained during rebrand migration) ───────────────── */
   --color-green-50: #f0fdf4;
   --color-green-100: #dcfce7;
   --color-green-200: #bbf7d0;
@@ -68,31 +110,29 @@
   --color-gray-850: #18212f;
   --color-gray-900: #111827;
   --color-gray-950: #030712;
-  --font-sans: 'Inter', 'sans-serif';
-  --font-heading: 'Montserrat', 'sans-serif';
+
+  /* Typography */
+  --font-sans: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-display), 'Amiri', Georgia, serif;
+  --font-body: var(--font-body), Georgia, serif;
+  --font-arabic: var(--font-display), 'Amiri', serif;
 }
 
-@import '@fontsource/inter';
-@import '@fontsource/montserrat';
-
+/* ───────────────── Theme-aware semantic values ───────────────── */
 :root {
-  --foreground-rgb: 17, 24, 39;
-  --background-start-rgb: 249, 250, 251;
-  --background-end-rgb: 255, 255, 255;
+  --surface: #faf6ec; /* ivory */
+  --panel: #f3ecd9; /* deeper parchment */
+  --ink: #1c1a17; /* warm manuscript ink */
+  --ink-soft: #5c5750; /* secondary text */
+  --line: #e4dcc6; /* hairline */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 249, 250, 251; /* gray-50 */
-    --background-start-rgb: 3, 7, 18; /* gray-950 */
-    --background-end-rgb: 17, 24, 39; /* gray-900 */
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb)))
-    rgb(var(--background-start-rgb));
+.dark {
+  --surface: #0e1714; /* deep green-black night */
+  --panel: #13201b;
+  --ink: #f2ead6; /* warm parchment text */
+  --ink-soft: #a9a18b;
+  --line: #243731;
 }
 
 @layer base {
@@ -100,7 +140,10 @@ body {
     @apply scroll-smooth;
   }
   body {
-    @apply font-sans text-gray-900 dark:text-gray-50 antialiased;
+    @apply bg-surface font-sans text-ink antialiased;
+  }
+  html[dir='rtl'] body {
+    @apply font-arabic;
   }
   h1,
   h2,
@@ -108,18 +151,17 @@ body {
   h4,
   h5,
   h6 {
-    @apply font-heading font-bold; /* Use font-heading and keep bold */
+    @apply font-heading font-bold;
   }
   a {
-    /* Using coral as the primary link color, sky for hover for variety */
-    @apply text-coral-600 hover:text-sky-600 dark:text-coral-400 dark:hover:text-sky-400 transition-colors duration-300 ease-in-out; /* Added transition for links */
+    @apply text-emerald-700 transition-colors duration-300 ease-in-out hover:text-emerald-600 dark:text-emerald-300 dark:hover:text-emerald-200;
   }
 }
 
-/* Styles for section entrance animations */
+/* Section entrance animations (reveal-on-scroll, wired in Phase 5) */
 .section-animate {
   opacity: 0;
-  transform: translateY(20px); /* You can adjust the translate value */
+  transform: translateY(20px);
   transition:
     opacity 0.7s ease-out,
     transform 0.7s ease-out;
@@ -128,4 +170,29 @@ body {
 .section-animate.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-animate {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Nur — radial luminous glow (signature atmosphere, used behind the hero) */
+.nur-glow {
+  background-image: radial-gradient(
+    ellipse 65% 55% at 50% 0%,
+    color-mix(in oklab, var(--color-gilt-300) 28%, transparent),
+    transparent 70%
+  );
+}
+
+.dark .nur-glow {
+  background-image: radial-gradient(
+    ellipse 65% 55% at 50% 0%,
+    color-mix(in oklab, var(--color-gilt-400) 18%, transparent),
+    transparent 70%
+  );
 }

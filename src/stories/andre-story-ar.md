@@ -9,7 +9,7 @@ age: 38
 country: "البرازيل"
 previousReligion: "المسيحية"
 profilePhoto: "/images/andre.webp"
-featured: false
+featured: true
 ---
 
 ## حياتي قبل الإسلام

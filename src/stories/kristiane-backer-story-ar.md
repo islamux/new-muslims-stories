@@ -9,7 +9,7 @@ age: 30
 country: "ألمانيا"
 previousReligion: "المسيحية"
 profilePhoto: "/images/stories/kristiane-backer.webp"
-featured: false
+featured: true
 ---
 
 ## حياتي قبل الإسلام
