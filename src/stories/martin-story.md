@@ -1,6 +1,7 @@
 ---
 title: "A Journey of Self-Discovery: Martin's Story"
 author: "Martin"
+firstName: "Martin"
 date: "2024-01-15"
 image: "/images/martin_leeds.webp"
 language: "en"

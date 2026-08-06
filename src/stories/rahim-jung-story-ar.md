@@ -1,6 +1,7 @@
 ---
 title: "من الموسيقى إلى الإيمان: قصة رحيم جونغ"
 author: "رحيم جونغ"
+firstName: "رحيم"
 date: "2014-07-01"
 image: "/images/jung.webp"
 profilePhoto: "/images/jung.webp"

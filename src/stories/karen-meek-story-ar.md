@@ -1,6 +1,7 @@
 ---
 title: "من الشك إلى الإيمان: قصة كارين ميك"
 author: "كارين ميك"
+firstName: "كارين"
 date: "2021-05-25"
 image: "/images/karen_meek.webp"
 language: "ar"

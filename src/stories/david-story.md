@@ -1,6 +1,7 @@
 ---
 title: "From Addiction to Faith: David's Story"
 author: "David"
+firstName: "David"
 date: "2023-11-20"
 image: "/images/david.webp"
 language: "en"

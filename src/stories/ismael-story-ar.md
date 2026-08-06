@@ -1,6 +1,7 @@
 ---
 title: "من الموسيقى إلى الإسلام: قصة إسماعيل"
 author: "إسماعيل (كان يُعرف بلوي)"
+firstName: "إسماعيل"
 date: "2020-01-01"
 image: "/images/ismael.webp"
 language: "ar"

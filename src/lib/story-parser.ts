@@ -50,8 +50,28 @@ export async function parseStoryFile(fileName: string): Promise<StoryData> {
     slug,
     contentHtml,
     ...data,
+    ...normalizeStoryData(data, fileName),
+  };
+}
+
+/**
+ * Normalizes optional/absent frontmatter so the runtime matches the StoryData
+ * contract. Frontmatter is unvalidated (gray-matter returns raw YAML values),
+ * so fields can be `null`/`undefined`; without this, `undefined` leaks into
+ * `<Image alt>` text, the home search, and the locale filter.
+ */
+export function normalizeStoryData(
+  data: { firstName?: string | null; country?: string | null; previousReligion?: string | null; image?: string | null; language?: string | null },
+  fileName: string,
+): Pick<StoryData, 'firstName' | 'country' | 'previousReligion' | 'image' | 'language'> {
+  const localeFromFile: Locale = fileName.endsWith('-ar.md') ? 'ar' : 'en';
+
+  return {
+    firstName: data.firstName || '',
+    country: data.country || '',
+    previousReligion: data.previousReligion || '',
     image: data.image || '',
-    language: data.language as Locale,
+    language: (data.language as Locale) || localeFromFile,
   };
 }
 

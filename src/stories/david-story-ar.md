@@ -1,6 +1,7 @@
 ---
 title: "من الإدمان إلى الإيمان: قصة ديفيد"
 author: "ديفيد"
+firstName: "ديفيد"
 date: "2023-11-20"
 image: "/images/david.webp"
 language: "ar"

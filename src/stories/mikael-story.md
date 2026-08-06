@@ -1,6 +1,7 @@
 ---
 title: "From Catholicism to Islam: Mikael's Journey"
 author: "Mikael"
+firstName: "Mikael"
 date: "2020-01-01"
 image: "/images/mikael.webp"
 language: "en"

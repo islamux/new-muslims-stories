@@ -1,6 +1,7 @@
 ---
 title: "A Musician's Journey: The Story of Yusuf Islam"
 author: "Yusuf Islam (Cat Stevens)"
+firstName: "Yusuf"
 date: "1977-12-23"
 image: "/images/Yusuf_Islam.webp"
 language: "en"

@@ -1,6 +1,7 @@
 ---
 title: "من الكاثوليكية إلى الإسلام: قصة ميكائيل"
 author: "ميكائيل"
+firstName: "ميكائيل"
 date: "2020-01-01"
 image: "/images/mikael.webp"
 language: "ar"

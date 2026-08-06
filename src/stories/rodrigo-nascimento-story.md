@@ -1,6 +1,7 @@
 ---
 title: "Rodrigo's Strength: The Brazilian Heavyweight Champion Embraces Islam"
 author: "Rodrigo Nascimento"
+firstName: "Rodrigo"
 date: "2023-01-01"
 image: "/images/Rodrigo.webp"
 language: "en"

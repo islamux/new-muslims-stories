@@ -1,6 +1,7 @@
 ---
 title: "From Secular London to Islam: Andro's Journey"
 author: "Andro"
+firstName: "Andro"
 date: "2020-01-01"
 image: "/images/andro.webp"
 language: "en"

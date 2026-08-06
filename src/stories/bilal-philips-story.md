@@ -1,6 +1,7 @@
 ---
 title: "From Communism to Islam: The Story of Dr. Bilal Philips"
 author: "Dr. Bilal Philips"
+firstName: "Bilal"
 date: "1972-01-01"
 image: "/images/philips.webp"
 language: "en"

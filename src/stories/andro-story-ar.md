@@ -1,6 +1,7 @@
 ---
 title: "من لندن العلمانية إلى الإسلام: قصة أندر"
 author: "أندر"
+firstName: "أندر"
 date: "2020-01-01"
 image: "/images/andro.webp"
 language: "ar"

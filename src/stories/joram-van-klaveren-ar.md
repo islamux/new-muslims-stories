@@ -1,6 +1,8 @@
 ---
 title: "من ناقد إلى مسلم: قصة يورام فان كلافرين"
 author: "يورام فان كلافرين"
+firstName: "يورام"
+language: "ar"
 date: "2019-10-28"
 image: "https://source.unsplash.com/random/800x600?sig=810"
 ---

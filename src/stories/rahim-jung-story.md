@@ -1,6 +1,7 @@
 ---
 title: "From Music to Faith: The Story of Rahim Jung"
 author: "Rahim Jung"
+firstName: "Rahim"
 date: "2014-07-01"
 image: "/images/jung.webp"
 profilePhoto: "/images/jung.webp"

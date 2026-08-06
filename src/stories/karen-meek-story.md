@@ -1,6 +1,7 @@
 ---
 title: "From Skepticism to Belief: Karen Meek's Story"
 author: "Karen Meek"
+firstName: "Karen"
 date: "2021-05-25"
 image: "/images/karen_meek.webp"
 language: "en"

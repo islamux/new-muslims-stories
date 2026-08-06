@@ -1,6 +1,8 @@
 ---
 title: "From Critic to Convert: The Story of Joram Van Klaveren"
 author: "Joram Van Klaveren"
+firstName: "Joram"
+language: "en"
 date: "2019-10-28"
 image: "https://source.unsplash.com/random/800x600?sig=593"
 ---

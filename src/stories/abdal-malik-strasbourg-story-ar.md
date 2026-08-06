@@ -1,6 +1,7 @@
 ---
 title: "من التطرف إلى الحب الروحي: رحلة عبد الملك"
 author: "عبد الملك (ريجيس فاييت ميكانو)"
+firstName: "عبد الملك"
 date: "2024-01-15"
 image: "/images/abdul-malik.webp"
 language: "ar"

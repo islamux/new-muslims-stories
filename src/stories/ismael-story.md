@@ -1,6 +1,7 @@
 ---
 title: "From Music to Islam: Ismail's Journey"
 author: "Ismail (formerly Louie)"
+firstName: "Ismail"
 date: "2020-01-01"
 image: "/images/ismael.webp"
 language: "en"

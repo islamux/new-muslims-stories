@@ -1,6 +1,7 @@
 ---
 title: "من الشيوعية إلى الإسلام: قصة الدكتور بلال فيلبس"
 author: "الدكتور بلال فيلبس"
+firstName: "بلال"
 date: "1972-01-01"
 image: "/images/philips.webp"
 language: "ar"
