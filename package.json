@@ -12,7 +12,8 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css}\"",
     "optimize-images": "node scripts/optimize-images.mjs",
     "update-image-refs": "node scripts/update-image-refs.mjs",
-    "generate-icons": "node scripts/generate-icons.mjs"
+    "generate-icons": "node scripts/generate-icons.mjs",
+    "audit:ar": "node scripts/audit-ar-stories.mjs"
   },
   "dependencies": {
     "dompurify": "^3.4.11",
