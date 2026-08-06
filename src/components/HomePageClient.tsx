@@ -5,7 +5,6 @@ import { useSyncExternalStore } from 'react';
 import type { HomePageClientProps } from '@/types';
 import TopNav from '@/components/TopNav';
 import HeroSection from '@/components/HeroSection';
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import FeaturedShowcase from '@/components/FeaturedShowcase';
 import Divider from '@/components/ui/Divider';
@@ -76,7 +75,6 @@ export default function HomePageClient({ stories, featuredStories }: HomePageCli
     <div className="min-h-screen bg-surface text-ink">
       <TopNav />
       <HeroSection />
-      <Header />
       <main>
         <FeaturedShowcase stories={featuredStories} />
         <FeaturedStories stories={stories} />
