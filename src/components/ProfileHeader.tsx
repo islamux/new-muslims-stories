@@ -11,7 +11,7 @@ export default function ProfileHeader({ story }: ProfileHeaderProps) {
     <div className="mb-8 flex items-center gap-4">
       {story.profilePhoto && (
         <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-full ring-2 ring-gilt-400/70 ring-offset-2 ring-offset-surface">
-          <StoryImage src={story.profilePhoto} alt={story.firstName} sizes="64px" />
+          <StoryImage src={story.profilePhoto} alt={story.firstName || story.title} sizes="64px" />
         </div>
       )}
       <div>

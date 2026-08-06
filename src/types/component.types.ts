@@ -86,7 +86,7 @@ export interface StoryOfTheDayProps {
 // Story image component props
 export interface StoryImageProps {
   src: string;
-  alt: string;
+  alt?: string;
   priority?: boolean;
   sizes?: string;
 }

@@ -20,7 +20,7 @@ export default function StoryCard({ story }: StoryCardProps) {
     <article className="group relative flex h-full flex-col rounded-lg border border-line bg-panel/60 p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-gilt-400 hover:shadow-lg">
       {story.profilePhoto && (
         <div className="relative mx-auto mb-4 h-20 w-20 overflow-hidden rounded-full ring-2 ring-gilt-400/70 ring-offset-2 ring-offset-panel">
-          <StoryImage src={story.profilePhoto} alt={story.firstName} sizes="96px" />
+          <StoryImage src={story.profilePhoto} alt={story.firstName || story.title} sizes="96px" />
         </div>
       )}
       <h3 className="mb-2 font-heading text-lg font-bold leading-snug text-ink">

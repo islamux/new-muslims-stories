@@ -5,7 +5,7 @@ import type { StoryImageProps } from '@/types';
 
 export default function StoryImage({
   src,
-  alt,
+  alt = '',
   priority = false,
   sizes = '(max-width: 768px) 100vw, 50vw',
 }: StoryImageProps) {

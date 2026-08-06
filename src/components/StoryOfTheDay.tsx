@@ -21,7 +21,7 @@ export default function StoryOfTheDay({ story }: StoryOfTheDayProps) {
         <div className="relative h-48 w-full md:h-auto md:w-48">
           <StoryImage
             src={story.profilePhoto}
-            alt={story.firstName}
+            alt={story.firstName || story.title}
             sizes="(max-width: 768px) 100vw, 192px"
           />
         </div>
