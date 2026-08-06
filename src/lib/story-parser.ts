@@ -37,6 +37,7 @@ export async function parseStoryFile(fileName: string): Promise<StoryData> {
   const data = matterResult.data as {
     title: string;
     firstName: string;
+    author: string;
     age: number;
     country: string;
     previousReligion: string;
@@ -50,6 +51,8 @@ export async function parseStoryFile(fileName: string): Promise<StoryData> {
     slug,
     contentHtml,
     ...data,
+    // Normalize display name: prefer firstName, fall back to author
+    firstName: data.firstName || data.author || '',
     image: data.image || '',
     language: data.language as Locale,
   };

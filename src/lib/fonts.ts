@@ -1,4 +1,4 @@
-import { Amiri, Inter, Source_Serif_4 } from 'next/font/google';
+import { Aref_Ruqaa, Amiri, Inter, Source_Serif_4 } from 'next/font/google';
 
 // UI / chrome: buttons, nav, labels, captions
 export const fontUI = Inter({
@@ -23,5 +23,15 @@ export const fontDisplay = Amiri({
   display: 'swap',
 });
 
-// Combined className to apply all three CSS variables in one place (e.g. on <html>)
-export const fontVariables = `${fontUI.variable} ${fontBody.variable} ${fontDisplay.variable}`;
+// Arabic UI sans for RTL chrome (buttons, nav, labels). Aref Ruqaa is a legible
+// Ruqaa calligraphic face; pairs with Amiri for headings/body. Falls back to
+// Noto Naskh Arabic (installed on most systems) and Amiri.
+export const fontArabicUI = Aref_Ruqaa({
+  subsets: ['arabic'],
+  weight: ['400', '700'],
+  variable: '--font-ruqaa',
+  display: 'swap',
+});
+
+// Combined className to apply all four CSS variables in one place (e.g. on <html>)
+export const fontVariables = `${fontUI.variable} ${fontBody.variable} ${fontDisplay.variable} ${fontArabicUI.variable}`;

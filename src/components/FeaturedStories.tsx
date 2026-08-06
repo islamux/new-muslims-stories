@@ -19,14 +19,16 @@ export default function FeaturedStories({ stories }: FeaturedStoriesProps) {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
+    if (!q) return stories;
     return stories.filter((s) => {
+      const title = (s.title ?? '').toLowerCase();
+      const firstName = (s.firstName ?? '').toLowerCase();
+      const country = (s.country ?? '').toLowerCase();
       const matchesCountry = !selectedCountry || s.country === selectedCountry;
-      const matchesQuery =
-        !q ||
-        s.title.toLowerCase().includes(q) ||
-        s.firstName.toLowerCase().includes(q) ||
-        s.country.toLowerCase().includes(q);
-      return matchesCountry && matchesQuery;
+      return (
+        matchesCountry &&
+        (title.includes(q) || firstName.includes(q) || country.includes(q))
+      );
     });
   }, [stories, selectedCountry, query]);
 

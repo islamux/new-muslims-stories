@@ -12,7 +12,7 @@ export default function StoryImage({
   return (
     <Image
       src={src}
-      alt={alt}
+      alt={alt || 'Story portrait'}
       fill
       className="object-cover"
       sizes={sizes}

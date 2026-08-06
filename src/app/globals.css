@@ -116,6 +116,7 @@
   --font-heading: var(--font-display), 'Amiri', Georgia, serif;
   --font-body: var(--font-body), Georgia, serif;
   --font-arabic: var(--font-display), 'Amiri', serif;
+  --font-arabic-ui: var(--font-ruqaa), 'Noto Naskh Arabic', 'Amiri', serif;
 }
 
 /* ───────────────── Theme-aware semantic values ───────────────── */
@@ -141,6 +142,13 @@
   }
   body {
     @apply bg-surface font-sans text-ink antialiased;
+  }
+  /* Arabic (RTL): reroute font-sans/font-body tokens so UI chrome and body text
+     use an Arabic-capable face instead of falling back from Inter/Source Serif 4
+     (Latin-only) to the OS system font. */
+  html[dir='rtl'] {
+    --font-sans: var(--font-ruqaa), 'Noto Naskh Arabic', 'Amiri', ui-sans-serif, sans-serif;
+    --font-body: var(--font-display), 'Amiri', Georgia, serif;
   }
   html[dir='rtl'] body {
     @apply font-arabic;
