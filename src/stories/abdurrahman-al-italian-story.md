@@ -9,7 +9,7 @@ age: 45
 country: "Italy"
 previousReligion: "Atheism"
 profilePhoto: "/images/stories/abdurahman-italie.webp"
-featured: false
+featured: true
 ---
 
 ## My Life Before Islam

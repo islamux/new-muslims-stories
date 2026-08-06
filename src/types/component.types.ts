@@ -19,8 +19,13 @@ export interface WithChildren {
 export type Theme = 'light' | 'dark';
 
 // Button component props
+export type ButtonVariant = 'primary' | 'ghost' | 'link';
+export type ButtonSize = 'md' | 'lg';
+
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
 }
 
 // Featured stories component props
@@ -34,8 +39,15 @@ export interface StoryCardProps {
 }
 
 // Story content display component props
+export interface StoryNavEntry {
+  slug: string;
+  title: string;
+}
+
 export interface StoryContentDisplayProps {
   story: StoryData;
+  prev?: StoryNavEntry | undefined;
+  next?: StoryNavEntry | undefined;
 }
 
 // Section component props
@@ -46,6 +58,7 @@ export interface SectionProps extends WithClassName, WithId {
 // Homepage client props
 export interface HomePageClientProps {
   stories: StoryData[];
+  featuredStories: StoryData[];
 }
 
 // Language switcher props (for future extensibility)

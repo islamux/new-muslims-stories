@@ -1,49 +1,48 @@
 'use client';
 
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname, useRouter } from '@/navigation';
+
+const LANGS = [
+  { code: 'en', label: 'EN', name: 'English' },
+  { code: 'ar', label: 'ع', name: 'العربية' },
+] as const;
 
 export default function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
 
-  const switchLocale = (nextLocale: string) => {
-    const newPath = pathname.replace(`/${locale}`, `/${nextLocale}`);
-    router.replace(newPath);
+  const switchLocale = (next: 'en' | 'ar') => {
+    if (next === locale) return;
+    router.replace(pathname, { locale: next });
   };
 
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
-  ];
-
   return (
-    <div className="inline-flex items-center bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-1">
-      {languages.map((lang) => (
-        <button
-          key={lang.code}
-          onClick={() => switchLocale(lang.code)}
-          disabled={locale === lang.code}
-          className={`
-            relative px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-in-out
-            flex items-center gap-2 min-w-[100px] justify-center
-            ${
-              locale === lang.code
-                ? 'bg-green-600 text-white shadow-sm'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            }
-            ${locale === lang.code ? 'cursor-default' : 'cursor-pointer'}
-            disabled:cursor-default
-          `}
-        >
-          <span className="text-base">{lang.flag}</span>
-          <span className="font-sans">{lang.name}</span>
-          {locale === lang.code && (
-            <div className="absolute inset-0 rounded-md ring-2 ring-green-600 ring-opacity-50" />
-          )}
-        </button>
-      ))}
+    <div
+      className="inline-flex items-center gap-0.5 rounded-md border border-line p-0.5"
+      role="group"
+      aria-label="Language"
+    >
+      {LANGS.map((lang) => {
+        const active = locale === lang.code;
+        return (
+          <button
+            key={lang.code}
+            type="button"
+            onClick={() => switchLocale(lang.code)}
+            aria-current={active ? 'true' : undefined}
+            aria-label={lang.name}
+            className={`min-w-[2rem] rounded px-2 py-1 text-sm font-semibold transition-colors ${
+              active
+                ? 'bg-emerald-600 text-white'
+                : 'text-ink-soft hover:text-emerald-700 dark:hover:text-emerald-300'
+            }`}
+          >
+            {lang.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

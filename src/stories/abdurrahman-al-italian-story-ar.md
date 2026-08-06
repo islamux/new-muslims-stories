@@ -9,7 +9,7 @@ age: 45
 country: "إيطاليا"
 previousReligion: "الإلحاد"
 profilePhoto: "/images/stories/abdurahman-italie.webp"
-featured: false
+featured: true
 ---
 
 ## حياتي قبل الإسلام

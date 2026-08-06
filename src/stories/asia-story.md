@@ -8,7 +8,7 @@ age: null
 country: "Japan"
 previousReligion: null
 profilePhoto: "/images/aysha.webp"
-featured: false
+featured: true
 date: null
 ---
 

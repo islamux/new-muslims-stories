@@ -1,22 +1,24 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import Star from './ui/Star';
+import { buttonVariants } from './Button';
 
 const HeroSection = () => {
   const t = useTranslations('Hero');
+
   return (
-    <section className="w-full py-20 md:py-32 lg:py-40 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-950 text-gray-900 dark:text-white transition-colors duration-300">
-      <div className="container mx-auto px-4 md:px-6 text-center">
-        <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-heading font-bold mb-6 leading-relaxed text-transparent bg-clip-text bg-gradient-to-r from-coral-400 to-sky-400">
+    <section className="relative overflow-hidden">
+      <div className="nur-glow absolute inset-0" aria-hidden="true" />
+      <div className="container relative z-10 mx-auto px-4 py-24 text-center md:py-32 lg:py-40">
+        <Star size={40} className="mx-auto mb-6 text-gilt-500" aria-hidden="true" />
+        <h1 className="mx-auto mb-6 max-w-4xl font-heading text-4xl font-bold leading-tight text-ink sm:text-5xl md:text-6xl lg:text-7xl">
           {t('headline')}
         </h1>
-        <p className="max-w-3xl mx-auto text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-10 font-sans">
+        <p className="mx-auto mb-10 max-w-2xl font-body text-lg text-ink-soft md:text-xl">
           {t('subheadline')}
         </p>
-        <a
-          href="#stories"
-          className="bg-coral-500 hover:bg-coral-600 dark:bg-coral-600 dark:hover:bg-coral-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 text-lg"
-        >
+        <a href="#stories" className={buttonVariants({ variant: 'primary', size: 'lg' })}>
           {t('exploreStories')}
         </a>
       </div>

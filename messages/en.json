@@ -6,7 +6,8 @@
   "featureFast": "Faster loading",
   "featureHome": "Access from the home screen",
   "install": "Install",
-  "notNow": "Not now"
+  "notNow": "Not now",
+  "dismiss": "Dismiss"
 },
   "Index": {
     "title": "Stories of Guidance from Around the World",
@@ -19,6 +20,7 @@
     "contactCenters": "Contact Islamic Centers",
     "dailyStoryTitle": "Daily Featured Story Title",
     "dailyStoryExcerpt": "A brief excerpt from today's inspiring story.",
+    "allStories": "All Stories",
     "footerCopyright": "{year} Discover Islam. All Rights Reserved."
   },
   "Hero": {
@@ -30,13 +32,17 @@
     "lifeBeforeIslam": "My Life Before Islam",
     "momentOfGuidance": "The Moment of Guidance",
     "reflections": "Reflections",
-    "return": "Return"
+    "return": "Return",
+    "previous": "Previous story",
+    "next": "Next story",
+    "navigation": "Story navigation"
   },
   "Common": {
     "filterByCountry": "Filter by Country",
     "filterAll": "All Countries",
     "filterByPreviousReligion": "Filter by Previous Religion",
     "searchStories": "Search stories...",
+    "noStories": "No stories found.",
     "storyOfTheDay": "Story of the Day",
     "learnMore": "Learn More",
     "yearsOldFrom": "{age} years old, from {country}",
@@ -51,5 +57,20 @@
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "We couldn't find the page or story you're looking for.",
+    "backHome": "Back to stories"
+  },
+  "Error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "tryAgain": "Try Again"
+  },
+  "Nav": {
+    "brand": "New Muslim Stories",
+    "stories": "Stories",
+    "menu": "Menu"
   }
 }

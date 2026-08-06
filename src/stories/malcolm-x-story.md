@@ -9,7 +9,7 @@ age: 39
 country: "United States"
 previousReligion: "Nation of Islam"
 profilePhoto: "/images/stories/malcolm-x.webp"
-featured: false
+featured: true
 ---
 
 ## My Life Before Islam

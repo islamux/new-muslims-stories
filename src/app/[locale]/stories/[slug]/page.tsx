@@ -1,6 +1,7 @@
 import type { Locale } from '@/types';
 import { StoryService } from '@/lib/story-service';
 import StoryContentDisplay from '@/components/StoryContentDisplay';
+import { setRequestLocale } from 'next-intl/server';
 
 // Generate static params for all stories
 export async function generateStaticParams() {
@@ -14,6 +15,25 @@ export default async function StoryPage({
   params: Promise<{ slug: string; locale: Locale }>;
 }) {
   const { slug, locale } = await params;
-  const story = await StoryService.getStoryData(slug, locale);
-  return <StoryContentDisplay story={story} />;
+
+  setRequestLocale(locale);
+
+  const [story, allStories] = await Promise.all([
+    StoryService.getStoryData(slug, locale),
+    StoryService.getSortedStoriesData(locale),
+  ]);
+
+  const index = allStories.findIndex((s) => s.slug === slug);
+  const prev = index > 0 ? allStories[index - 1] : undefined;
+  const next = index >= 0 && index < allStories.length - 1 ? allStories[index + 1] : undefined;
+
+  return (
+    <div className="min-h-screen bg-surface text-ink">
+      <StoryContentDisplay
+        story={story}
+        prev={prev ? { slug: prev.slug, title: prev.title } : undefined}
+        next={next ? { slug: next.slug, title: next.title } : undefined}
+      />
+    </div>
+  );
 }

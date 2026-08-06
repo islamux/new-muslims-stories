@@ -9,7 +9,7 @@ age: 30
 country: "Germany"
 previousReligion: "Christianity"
 profilePhoto: "/images/stories/kristiane-backer.webp"
-featured: false
+featured: true
 ---
 
 ## My Life Before Islam
