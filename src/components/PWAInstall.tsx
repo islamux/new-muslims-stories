@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Icon from './ui/Icon';
+import Star from './ui/Star';
+import { buttonVariants } from './Button';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -13,12 +15,7 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
-// Fixed: Use translation keys that match the actual message files
-const PWA_FEATURES = [
-  { key: 'featureOffline', icon: 'offline' },
-  { key: 'featureFast', icon: 'speed' },
-  { key: 'featureHome', icon: 'home' },
-];
+const PWA_FEATURES = ['featureOffline', 'featureFast', 'featureHome'] as const;
 
 export default function PWAInstall() {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -68,53 +65,40 @@ export default function PWAInstall() {
     localStorage.setItem('pwa-install-dismissed', 'true');
   };
 
-  // Fixed: Direct translation usage without fallback logic
   if (!showInstallPrompt || !installPrompt) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 animate-in slide-in-from-bottom-5">
-        <div className="flex items-start mb-3">
-          <div className="flex-shrink-0">
-            <Icon name="app" className="w-8 h-8 text-green-600" />
-          </div>
+    <div className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-sm">
+      <div className="animate-in slide-in-from-bottom-5 rounded-lg border border-line bg-panel p-4 shadow-xl">
+        <div className="mb-3 flex items-start">
+          <Star size={30} className="flex-shrink-0 text-gilt-500" aria-hidden="true" />
           <div className="ms-3 flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {t('installTitle')}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {t('installDescription')}
-            </p>
+            <h3 className="font-heading text-lg font-bold text-ink">{t('installTitle')}</h3>
+            <p className="mt-1 font-sans text-sm text-ink-soft">{t('installDescription')}</p>
           </div>
           <button
             onClick={handleDismiss}
-            className="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            aria-label="Dismiss"
+            className="flex-shrink-0 text-ink-soft transition-colors hover:text-emerald-700 dark:hover:text-emerald-300"
+            aria-label={t('dismiss')}
           >
-            <Icon name="close" className="w-5 h-5" />
+            <Icon name="close" className="h-5 w-5" />
           </button>
         </div>
 
-        <ul className="space-y-2 mb-4 text-sm text-gray-600 dark:text-gray-400">
+        <ul className="mb-4 space-y-2 font-sans text-sm text-ink-soft">
           {PWA_FEATURES.map((feature) => (
-            <li key={feature.key} className="flex items-center">
-              <Icon name="check" className="w-4 h-4 text-green-600 me-2" />
-              {t(feature.key)}
+            <li key={feature} className="flex items-center">
+              <Icon name="check" className="me-2 h-4 w-4 text-emerald-600" />
+              {t(feature)}
             </li>
           ))}
         </ul>
 
         <div className="flex gap-2">
-          <button
-            onClick={handleInstall}
-            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
-          >
+          <button onClick={handleInstall} className={buttonVariants({ variant: 'primary' })}>
             {t('install')}
           </button>
-          <button
-            onClick={handleDismiss}
-            className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
-          >
+          <button onClick={handleDismiss} className={buttonVariants({ variant: 'ghost' })}>
             {t('notNow')}
           </button>
         </div>

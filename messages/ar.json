@@ -6,7 +6,8 @@
     "featureFast": "تحميل أسرع",
     "featureHome": "وصول من الشاشة الرئيسية",
     "install": "تثبيت",
-    "notNow": "ليس الآن"
+    "notNow": "ليس الآن",
+    "dismiss": "إغلاق"
   },
   "Index": {
     "title": "قصص هداية من جميع أنحاء العالم",
@@ -31,7 +32,10 @@
     "lifeBeforeIslam": "حياتي قبل الإسلام",
     "momentOfGuidance": "لحظة الهداية",
     "reflections": "تأملات",
-    "return": "عودة"
+    "return": "عودة",
+    "previous": "القصة السابقة",
+    "next": "القصة التالية",
+    "navigation": "التنقل بين القصص"
   },
   "Common": {
     "filterByCountry": "تصفية حسب البلد",

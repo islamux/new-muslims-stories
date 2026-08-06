@@ -39,8 +39,15 @@ export interface StoryCardProps {
 }
 
 // Story content display component props
+export interface StoryNavEntry {
+  slug: string;
+  title: string;
+}
+
 export interface StoryContentDisplayProps {
   story: StoryData;
+  prev?: StoryNavEntry | undefined;
+  next?: StoryNavEntry | undefined;
 }
 
 // Section component props

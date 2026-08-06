@@ -196,3 +196,24 @@
     transparent 70%
   );
 }
+
+/* ───────────────── Story reading ───────────────── */
+.story-prose {
+  font-family: var(--font-body);
+}
+
+html[dir='rtl'] .story-prose {
+  font-family: var(--font-arabic);
+}
+
+/* Illuminated drop cap on the first paragraph of the first section */
+.drop-cap > p:first-of-type::first-letter {
+  font-family: var(--font-display), Georgia, serif;
+  float: inline-start;
+  font-size: 3.6em;
+  line-height: 0.82;
+  padding-inline-end: 0.08em;
+  color: var(--color-gilt-600);
+  font-weight: 700;
+}
+

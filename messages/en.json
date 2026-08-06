@@ -6,7 +6,8 @@
   "featureFast": "Faster loading",
   "featureHome": "Access from the home screen",
   "install": "Install",
-  "notNow": "Not now"
+  "notNow": "Not now",
+  "dismiss": "Dismiss"
 },
   "Index": {
     "title": "Stories of Guidance from Around the World",
@@ -31,7 +32,10 @@
     "lifeBeforeIslam": "My Life Before Islam",
     "momentOfGuidance": "The Moment of Guidance",
     "reflections": "Reflections",
-    "return": "Return"
+    "return": "Return",
+    "previous": "Previous story",
+    "next": "Next story",
+    "navigation": "Story navigation"
   },
   "Common": {
     "filterByCountry": "Filter by Country",
