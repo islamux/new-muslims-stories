@@ -1,3 +1,15 @@
+---
+title: "From the Streets of Strasbourg to Islam: Abdal Malik's Story"
+author: "Abdal Malik (Régis Fayette-Mikano)"
+date: "2024-01-15"
+country: "France"
+previousReligion: "Catholic"
+image: "/images/abdul-malik.webp"
+language: "en"
+profilePhoto: "/images/abdul-malik.webp"
+featured: false
+---
+
 Life Before Islam
 Raised in the suburbs of Strasbourg, France, Régis Fayette-Mikano (later known as Abdal Malik) lived a life torn between his artistic talent and the harsh realities of the streets. Despite his Catholic upbringing, he struggled with deep existential questions and a sense of alienation, searching for a truth that could offer peace amidst the chaos of a materialistic world.
 Moment of Guidance
