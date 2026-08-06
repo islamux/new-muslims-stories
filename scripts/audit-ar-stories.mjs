@@ -18,24 +18,55 @@ const RE = {
   latinRun: /[A-Za-z]{3,}/g,
   url: /https?:\/\/\S+|www\.\S+|\b\w+\.(?:com|org|net|io|md|webp|png|jpg|jpeg|gif)\b/gi,
   inlineCode: /`[^`]*`/g,
+  // Markdown link "[label](url)" — label is navigation text, not prose.
+  markdownLink: /\[[^\]]*\]\([^)]*\)/g,
   fence: /^---\s*$/,
 };
 
+// Famous names / titles kept in Latin by choice (brands, shows, songs, orgs).
+// Matched case-insensitively and masked before Latin tokenization.
+const PHRASE_ALLOW = [
+  'daily mail',
+  'mail on sunday',
+  'sky news',
+  'channel 5',
+  'in search of a holy land',
+  'the deen show',
+  'living the life',
+  'islam in spanish',
+  'zuma luma',
+  'the secret life of chaos',
+  'wild world',
+  'peace train',
+  'morning has broken',
+  'islam 10',
+];
+
 // Tokens permitted as Latin inside Arabic text. Auto-allowed: ALL-CAPS acronyms (>=3).
 // Extend this set with famous proper names / orgs as the report surfaces them.
-const EXPLICIT_ALLOW = new Set(['iera', 'mtv', 'quran']);
+const EXPLICIT_ALLOW = new Set(['iera', 'mtv', 'quran', 'embrace']);
 
 function isAllowedLatin(token) {
   if (/^[A-Z]{3,}$/.test(token)) return true; // NFL, UNIA, USA, BBC, ...
   return EXPLICIT_ALLOW.has(token.toLowerCase());
 }
 
+function stripProse(text) {
+  let s = text.replace(RE.markdownLink, '').replace(RE.url, '').replace(RE.inlineCode, '');
+  for (const phrase of PHRASE_ALLOW) {
+    s = s.replace(new RegExp(phrase, 'gi'), ' '.repeat(phrase.length));
+  }
+  return s;
+}
+
 function flagsIn(text) {
-  const clean = text.replace(RE.url, '').replace(RE.inlineCode, '');
+  // CJK/Cyrillic are checked on the raw-ish text (a Chinese link label still renders).
+  const cleanForScripts = text.replace(RE.url, '').replace(RE.inlineCode, '');
+  const cleanForLatin = stripProse(text);
   const out = [];
-  for (const m of clean.matchAll(RE.cjk)) out.push({ cat: 'cjk', text: m[0] });
-  for (const m of clean.matchAll(RE.cyrillic)) out.push({ cat: 'cyrillic', text: m[0] });
-  for (const m of clean.matchAll(RE.latinRun)) {
+  for (const m of cleanForScripts.matchAll(RE.cjk)) out.push({ cat: 'cjk', text: m[0] });
+  for (const m of cleanForScripts.matchAll(RE.cyrillic)) out.push({ cat: 'cyrillic', text: m[0] });
+  for (const m of cleanForLatin.matchAll(RE.latinRun)) {
     if (!isAllowedLatin(m[0])) out.push({ cat: 'latin', text: m[0] });
   }
   return out;
