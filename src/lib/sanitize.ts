@@ -1,18 +1,19 @@
+import { JSDOM } from 'jsdom';
+import createDOMPurify from 'dompurify';
 import type { DOMPurify } from 'dompurify';
 
 let purify: DOMPurify | null = null;
 
-async function getDOMPurify(): Promise<DOMPurify> {
+function getDOMPurify(): DOMPurify {
   if (!purify) {
-    purify = (await import('dompurify')).default;
+    purify = createDOMPurify(new JSDOM('').window);
   }
   return purify;
 }
 
-export async function sanitizeHtmlServer(html: string): Promise<string> {
+export function sanitizeHtmlServer(html: string): string {
   try {
-    const DOMPurify = await getDOMPurify();
-    return DOMPurify.sanitize(html, {
+    return getDOMPurify().sanitize(html, {
       ALLOWED_TAGS: [
         'p',
         'br',
@@ -43,7 +44,8 @@ export async function sanitizeHtmlServer(html: string): Promise<string> {
       ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class', 'id'],
       ALLOW_DATA_ATTR: false,
     });
-  } catch {
-    return html;
+  } catch (error) {
+    console.error('[sanitizeHtmlServer] sanitization failed; dropping content', error);
+    return '';
   }
 }

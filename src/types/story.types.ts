@@ -8,7 +8,8 @@ export interface StoryData {
   slug: string;
   title: string;
   firstName: string;
-  age: number;
+  author: string;
+  age: number | null;
   country: string;
   previousReligion: string;
   profilePhoto: string;
@@ -16,6 +17,7 @@ export interface StoryData {
   featured: boolean;
   language: Locale;
   contentHtml: string;
+  date: string;
 }
 
 // Story service return types

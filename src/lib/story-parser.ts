@@ -17,6 +17,40 @@ function extractSlug(fileName: string): string {
 }
 
 /**
+ * Coerces raw frontmatter into a complete, typed StoryData.
+ * Pure and side-effect-free so it can be unit-tested without the filesystem.
+ * Fails safe: every field has a sane default so downstream code never sees
+ * `undefined` (which previously caused `.toLowerCase()` crashes).
+ */
+export function normalizeStoryData(
+  raw: Record<string, unknown>,
+  slug: string,
+  contentHtml: string,
+): StoryData {
+  const str = (v: unknown): string => (typeof v === 'string' ? v : '');
+  const numOrNull = (v: unknown): number | null =>
+    typeof v === 'number' && Number.isFinite(v) ? v : null;
+  const language: Locale = raw.language === 'ar' ? 'ar' : 'en';
+  const firstName = str(raw.firstName) || str(raw.author);
+
+  return {
+    slug,
+    contentHtml,
+    title: str(raw.title),
+    firstName,
+    author: str(raw.author),
+    age: numOrNull(raw.age),
+    country: str(raw.country),
+    previousReligion: str(raw.previousReligion),
+    profilePhoto: str(raw.profilePhoto),
+    image: str(raw.image),
+    featured: raw.featured === true,
+    language,
+    date: str(raw.date),
+  };
+}
+
+/**
  * Parses a single markdown file into StoryData
  */
 export async function parseStoryFile(fileName: string): Promise<StoryData> {
@@ -31,38 +65,16 @@ export async function parseStoryFile(fileName: string): Promise<StoryData> {
   // Use remark to convert markdown into HTML string
   const processedContent = await remark().use(html).process(matterResult.content);
   const rawHtml = processedContent.toString();
-  const contentHtml = await sanitizeHtmlServer(rawHtml);
+  const contentHtml = sanitizeHtmlServer(rawHtml);
 
-  // Combine the data with the slug and contentHtml
-  const data = matterResult.data as {
-    title: string;
-    firstName: string;
-    author: string;
-    age: number;
-    country: string;
-    previousReligion: string;
-    profilePhoto: string;
-    image: string;
-    featured: boolean;
-    language: string;
-  };
-
-  return {
-    slug,
-    contentHtml,
-    ...data,
-    // Normalize display name: prefer firstName, fall back to author
-    firstName: data.firstName || data.author || '',
-    image: data.image || '',
-    language: data.language as Locale,
-  };
+  return normalizeStoryData(matterResult.data, slug, contentHtml);
 }
 
 /**
  * Gets all story file names from the stories directory
  */
 export function getStoryFileNames(): string[] {
-  return fs.readdirSync(storiesDirectory);
+  return fs.readdirSync(storiesDirectory).filter((name) => name.endsWith('.md'));
 }
 
 /**

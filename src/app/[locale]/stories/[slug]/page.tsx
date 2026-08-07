@@ -3,6 +3,10 @@ import { StoryService } from '@/lib/story-service';
 import StoryContentDisplay from '@/components/StoryContentDisplay';
 import { setRequestLocale } from 'next-intl/server';
 
+// Only the slugs from generateStaticParams are valid; any other slug 404s
+// at the router level (correct HTTP status, no dynamic rendering).
+export const dynamicParams = false;
+
 // Generate static params for all stories
 export async function generateStaticParams() {
   return StoryService.getAllStorySlugs().map((entry) => entry.params);
