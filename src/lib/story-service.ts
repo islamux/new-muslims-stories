@@ -6,15 +6,23 @@ import { parseStoryFile, getStoryFileNames, extractSlugAndLocale } from './story
  */
 export class StoryService {
   /**
-   * Get all stories for a specific locale, sorted alphabetically
+   * Get all stories for a specific locale, sorted alphabetically.
+   * A single unreadable/corrupt file is skipped (and logged) rather than
+   * taking down the whole list.
    */
   static async getSortedStoriesData(locale: string): Promise<StoryData[]> {
     const fileNames = getStoryFileNames();
 
-    const allStoriesData = await Promise.all(fileNames.map((fileName) => parseStoryFile(fileName)));
+    const settled = await Promise.allSettled(fileNames.map((fileName) => parseStoryFile(fileName)));
 
-    // Filter stories by locale
-    const filteredStories = allStoriesData.filter((story) => story.language === locale);
+    settled
+      .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+      .forEach((r) => console.error('[StoryService] skipping unreadable story file:', r.reason));
+
+    const filteredStories = settled
+      .filter((r): r is PromiseFulfilledResult<StoryData> => r.status === 'fulfilled')
+      .map((r) => r.value)
+      .filter((story) => story.language === locale);
 
     // Sort stories by title alphabetically
     return filteredStories.sort((a, b) => a.title.localeCompare(b.title));

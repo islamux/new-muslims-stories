@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/navigation';
 import { useStorySections } from '@/hooks/useStorySections';
@@ -9,14 +8,6 @@ import StoryImage from '@/components/ui/StoryImage';
 import Divider from '@/components/ui/Divider';
 import Star from '@/components/ui/Star';
 import type { StoryContentDisplayProps } from '@/types';
-
-function sanitizeHtml(html: string): string {
-  if (typeof window === 'undefined') return html;
-  const temp = document.createElement('div');
-  temp.innerHTML = html;
-  temp.querySelectorAll('script, iframe, object, embed').forEach((el) => el.remove());
-  return temp.innerHTML;
-}
 
 interface StorySectionProps {
   title: string;
@@ -28,7 +19,6 @@ const PROSE =
   'prose prose-lg max-w-none prose-headings:font-heading prose-headings:text-ink prose-p:text-ink prose-p:leading-relaxed prose-a:text-emerald-700 prose-strong:text-ink prose-blockquote:border-gilt-400 dark:prose-a:text-emerald-300';
 
 function StorySection({ title, content, index }: StorySectionProps) {
-  const sanitized = useMemo(() => sanitizeHtml(content), [content]);
   const isMoment = index === 1;
 
   return (
@@ -46,7 +36,7 @@ function StorySection({ title, content, index }: StorySectionProps) {
       </h2>
       <div
         className={`${PROSE} ${index === 0 ? 'drop-cap' : ''}`}
-        dangerouslySetInnerHTML={{ __html: sanitized }}
+        dangerouslySetInnerHTML={{ __html: content }}
       />
     </section>
   );
