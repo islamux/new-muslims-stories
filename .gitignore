@@ -1,7 +1,8 @@
 node_modules/
 .next/
-*.tsbuildinfo
 dist/
+graphify-out/
+*.tsbuildinfo
 .env
 .env.local
 .vercel/
