@@ -25,7 +25,7 @@ export default function TopNav() {
         <div className="flex items-center gap-2 sm:gap-3">
           <a
             href="#stories"
-            className="hidden rounded-md px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:text-emerald-700 sm:inline dark:hover:text-emerald-300"
+            className="hidden rounded-md px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface sm:inline dark:hover:text-emerald-300"
           >
             {t('stories')}
           </a>

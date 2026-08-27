@@ -75,7 +75,7 @@ export default function HomePageClient({ stories, featuredStories }: HomePageCli
     <div className="min-h-screen bg-surface text-ink">
       <TopNav />
       <HeroSection />
-      <main>
+      <main id="main-content">
         <FeaturedShowcase stories={featuredStories} />
         <FeaturedStories stories={stories} />
         <Section className="my-12">

@@ -33,7 +33,7 @@ export default function LanguageSwitcher() {
             onClick={() => switchLocale(lang.code)}
             aria-current={active ? 'true' : undefined}
             aria-label={lang.name}
-            className={`min-w-[2rem] rounded px-2 py-1 text-sm font-semibold transition-colors ${
+            className={`min-w-[2rem] rounded px-2 py-1 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${
               active
                 ? 'bg-emerald-600 text-white'
                 : 'text-ink-soft hover:text-emerald-700 dark:hover:text-emerald-300'

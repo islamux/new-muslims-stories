@@ -22,6 +22,11 @@ export default function PWAInstall() {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const t = useTranslations('PWA');
 
+  const dismiss = () => {
+    setShowInstallPrompt(false);
+    localStorage.setItem('pwa-install-dismissed', 'true');
+  };
+
   useEffect(() => {
     const dismissedStorage = localStorage.getItem('pwa-install-dismissed');
     if (dismissedStorage) return;
@@ -37,12 +42,18 @@ export default function PWAInstall() {
       localStorage.setItem('pwa-install-dismissed', 'true');
     };
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dismiss();
+    };
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -60,16 +71,16 @@ export default function PWAInstall() {
     setInstallPrompt(null);
   };
 
-  const handleDismiss = () => {
-    setShowInstallPrompt(false);
-    localStorage.setItem('pwa-install-dismissed', 'true');
-  };
-
   if (!showInstallPrompt || !installPrompt) return null;
 
   return (
     <div className="fixed bottom-4 inset-inline-start-4 z-50 md:inset-inline-end-4 md:inset-inline-start-auto md:max-w-sm">
-      <div className="animate-in slide-in-from-bottom-5 rounded-lg border border-line bg-panel p-4 shadow-xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={t('installTitle')}
+        className="animate-in slide-in-from-bottom-5 rounded-lg border border-line bg-panel p-4 shadow-xl"
+      >
         <div className="mb-3 flex items-start">
           <Star size={30} className="flex-shrink-0 text-gilt-500" aria-hidden="true" />
           <div className="ms-3 flex-1">
@@ -77,8 +88,8 @@ export default function PWAInstall() {
             <p className="mt-1 font-sans text-sm text-ink-soft">{t('installDescription')}</p>
           </div>
           <button
-            onClick={handleDismiss}
-            className="flex-shrink-0 text-ink-soft transition-colors hover:text-emerald-700 dark:hover:text-emerald-300"
+            onClick={dismiss}
+            className="flex-shrink-0 rounded p-1 text-ink-soft transition-colors hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 dark:hover:text-emerald-300"
             aria-label={t('dismiss')}
           >
             <Icon name="close" className="h-5 w-5" />
@@ -98,7 +109,7 @@ export default function PWAInstall() {
           <button onClick={handleInstall} className={buttonVariants({ variant: 'primary' })}>
             {t('install')}
           </button>
-          <button onClick={handleDismiss} className={buttonVariants({ variant: 'ghost' })}>
+          <button onClick={dismiss} className={buttonVariants({ variant: 'ghost' })}>
             {t('notNow')}
           </button>
         </div>
