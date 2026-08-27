@@ -1,32 +1,38 @@
 import type { MetadataRoute } from 'next';
 import { StoryService } from '@/lib/story-service';
-import { routing } from '@/i18n/routing';
 
-const SITE_URL = 'https://newmuslimstories.com';
+const BASE_URL = 'https://newmuslimstories.com';
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const entries: MetadataRoute.Sitemap = [];
+export default function sitemap(): MetadataRoute.Sitemap {
+  const allSlugs = StoryService.getAllStorySlugs();
 
-  // Locale homepages
-  for (const locale of routing.locales) {
-    entries.push({
-      url: `${SITE_URL}/${locale}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1,
-    });
-
-    // Individual stories per locale
-    const stories = await StoryService.getSortedStoriesData(locale);
-    for (const story of stories) {
-      entries.push({
-        url: `${SITE_URL}/${locale}/stories/${story.slug}`,
+  const storyUrls = allSlugs.flatMap(({ params }) => {
+    const { slug, locale } = params;
+    return [
+      {
+        url: `${BASE_URL}/${locale}/stories/${slug}`,
         lastModified: new Date(),
-        changeFrequency: 'monthly',
+        changeFrequency: 'monthly' as const,
         priority: 0.8,
-      });
-    }
-  }
+      },
+    ];
+  });
 
-  return entries;
+  const localeUrls = ['en', 'ar'].map((locale) => ({
+    url: `${BASE_URL}/${locale}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 1,
+  }));
+
+  return [
+    ...localeUrls,
+    ...storyUrls,
+    {
+      url: `${BASE_URL}/offline`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly' as const,
+      priority: 0.1,
+    },
+  ];
 }

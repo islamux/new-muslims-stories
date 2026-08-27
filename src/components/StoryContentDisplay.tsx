@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Link } from '@/navigation';
-import { useStorySections } from '@/hooks/useStorySections';
+import { getStorySections } from '@/lib/story-sections';
 import ProfileHeader from './ProfileHeader';
 import StoryImage from '@/components/ui/StoryImage';
 import Divider from '@/components/ui/Divider';
@@ -41,7 +41,7 @@ function StorySection({ title, content, index }: StorySectionProps) {
 export default function StoryContentDisplay({ story, prev, next }: StoryContentDisplayProps) {
   const t = useTranslations('Story');
 
-  const { lifeBeforeIslam, momentOfGuidance, reflections } = useStorySections(story.contentHtml);
+  const { lifeBeforeIslam, momentOfGuidance, reflections } = getStorySections(story.contentHtml);
 
   const sections = [
     { key: 'lifeBeforeIslam' as const, content: lifeBeforeIslam },

@@ -2,6 +2,7 @@
 import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://newmuslimstories.com'),
   title: 'New Muslim Stories',
   description: 'Inspiring journeys to Islam from around the world.',
   manifest: '/manifest.json',
