@@ -1,17 +1,70 @@
 # Project Issues & Fixes Log
 
-**Last Updated**: March 05, 2026
+**Last Updated**: August 27, 2026
 **Maintained By**: Development Team
 
 ---
 
 ## Table of Contents
 
-1. [March 2026](#march-2026)
-2. [January 2026](#january-2026)
-3. [Recent Git Commits (Issues & Fixes)](#recent-git-commits-issues--fixes)
-4. [Resolved Issues](#resolved-issues)
-5. [Known Issues](#known-issues)
+1. [August 2026 — Senior Review Fixes](#august-2026)
+2. [March 2026](#march-2026)
+3. [January 2026](#january-2026)
+4. [Recent Git Commits (Issues & Fixes)](#recent-git-commits-issues--fixes)
+5. [Resolved Issues](#resolved-issues)
+6. [Known Issues](#known-issues)
+
+---
+
+## August 2026 — Senior Code Review Fixes
+
+### Phase 1: Correctness & Risk Reduction ✅
+
+- Formatted 11 unformatted source files
+- Added `language:` frontmatter to joram-van-klaveren story pair (Arabic story now accessible in `/ar/`)
+- Added `###` headings to rezeski story files (fixes empty sections)
+- Added `pnpm exec tsc --noEmit` and `pnpm format:check` to CI workflow
+- Fixed null guard on `sw.js` accept header
+- Updated `.env.example` to match actual env vars
+- Excluded `.next` from tsconfig for standalone tsc checks
+
+### Phase 2: Maintainability ✅
+
+- Deleted dead hooks: useIntersectionObserver, useMultipleIntersectionObserver, useThemeToggle
+- Deleted dead component: Header.tsx, lib/index.ts barrel export
+- Removed dead types: hook.types.ts, LanguageSwitcherProps, ThemeToggleProps, WithChildren, Theme
+- Removed unused 'app' icon variant from Icon.tsx
+- Removed 14 unused message keys from en.json and ar.json
+- Fixed offline locale: added LocalePersist component, offline page reads from localStorage
+- Fixed PWA install banner RTL: physical to logical CSS properties
+- Eliminated homepage double-parsing: compute featured from already-fetched stories
+- Removed unnecessary 'use client' from Section.tsx
+- Fixed eslint-plugin-react React version warning
+
+### Phase 3: SEO & Performance ✅
+
+- Removed dead section-animate CSS from globals.css
+- Moved useStorySections to src/lib/story-sections.ts (pure function, no 'use client')
+- Added generateMetadata to all 138 story pages (title, OG, Twitter, hreflang)
+- Added generateMetadata to homepage (locale-aware)
+- Added dynamic sitemap.ts for all stories
+- Added robots.txt with crawl rules
+- Added metadataBase to fix OG image resolution warnings
+
+### Phase 4: Accessibility ✅
+
+- Added skip-to-content link in locale layout
+- Added id='main-content' to main element in HomePageClient
+- Added focus-visible:ring-2 to LanguageSwitcher, PWAInstall dismiss, TopNav stories link
+- Added role='dialog' + aria-modal to PWAInstall
+- Added Escape key dismiss to PWAInstall
+
+### Phase 5: Final Polish ✅
+
+- SW cache name synced to package version (v0.1.0)
+- SW notification click: focus existing window, fallback to root URL
+- Added frontmatter validation warnings for missing required fields
+- StoryCard: removed invisible after: link overlay (a11y)
 
 ---
 

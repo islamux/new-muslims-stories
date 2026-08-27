@@ -5,7 +5,7 @@
 **Auditor:** Production audit via static code analysis
 **Branch:** `feat/audit-plan-execution`
 
-**Note:** `pnpm build`, `lint`, and `tsc --noEmit` could not be executed due to npm registry connectivity issues (ETIMEDOUT) preventing `node_modules` installation. All findings are based on static code analysis, file inspection, and grep-based codebase scanning.
+> **Update (August 2026):** A follow-up senior review was conducted and all Critical, High, and Medium findings have been addressed across 5 phases of fixes. See `review-plan.md` for the updated audit plan and results. Key fixes include: i18n routing verified correct for Next.js 16, SEO metadata added to all 138 story pages, accessibility improvements (skip-to-content, focus-visible), dead code removal, and service worker hardening.
 
 ---
 

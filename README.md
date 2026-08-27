@@ -32,22 +32,25 @@ This web application, built with Next.js and TypeScript, focuses on showcasing s
 
 ✅ **Implemented**:
 - Multi-language support (English/Arabic with full RTL)
-- Markdown-based story content management (~69+ stories × 2 languages)
-- PWA with offline support and install prompt
+- Markdown-based story content management (~69 stories × 2 languages)
+- PWA with offline support, install prompt, and service worker
 - Dark/Light theme toggle
-- Optimized profile photos (WebP/AVIF via next/image)
+- Optimized profile photos (WebP via next/image)
 - Story filtering and search
 - Story of the Day (auto-rotating featured story)
-- "What's Next?" section (links to learn more about Islam)
+- "What's Next?" and "Who are New Muslims?" sections
 - Responsive design (mobile, tablet, desktop)
-- Static site generation
-- Scroll-triggered animations
+- Static site generation (SSG)
 - Plausible Analytics integration
+- SEO: `generateMetadata` on all pages, dynamic `sitemap.xml`, `robots.txt`
+- Accessibility: skip-to-content link, focus-visible indicators, ARIA labels
+- Frontmatter validation with missing-field warnings
+- Code splitting via `next/dynamic` on homepage sections
+- Locale persistence for offline page detection
 
 🚧 **Planned**:
-- Code splitting optimization
 - Storybook documentation
-- Unit/integration test coverage
+- Expanded unit/integration test coverage
 
 ## Getting Started
 
@@ -71,11 +74,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ### Available Scripts
 
 ```bash
-pnpm dev       # Start development server
-pnpm build     # Build for production
-pnpm start     # Start production server
-pnpm lint      # Run ESLint
-pnpm format    # Format code with Prettier
+pnpm dev            # Start development server
+pnpm build          # Build for production
+pnpm start          # Start production server
+pnpm test           # Run unit tests (Vitest)
+pnpm lint           # Run ESLint
+pnpm format         # Format code with Prettier
+pnpm format:check   # Check formatting without modifying
 ```
 
 ### Project Structure
@@ -89,36 +94,42 @@ new-muslim-stories/
 ├── src/
 │   ├── app/              # Next.js App Router pages
 │   │   ├── globals.css   # Global Tailwind styles
-│   │   ├── layout.tsx    # Root HTML layout
-│   │   ├── [locale]/    # Dynamic locale routes (en/ar)
+│   │   ├── robots.ts     # Dynamic robots.txt
+│   │   ├── sitemap.ts    # Dynamic sitemap.xml
+│   │   ├── [locale]/     # Dynamic locale routes (en/ar)
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
+│   │   │   ├── error.tsx
+│   │   │   ├── loading.tsx
+│   │   │   ├── not-found.tsx
 │   │   │   └── stories/[slug]/page.tsx
-│   │   └── offline/     # PWA offline fallback page
+│   │   └── offline/      # PWA offline fallback page
 │   ├── components/       # React components
-│   │   ├── ui/          # UI primitives (Section, Button)
-│   │   ├── Header.tsx, Footer.tsx, TopNav.tsx
+│   │   ├── ui/           # UI primitives (Section, Button, Icon, Star, etc.)
+│   │   ├── Footer.tsx, TopNav.tsx
 │   │   ├── LanguageSwitcher.tsx, ThemeToggle.tsx
-│   │   ├── HeroSection.tsx, FeaturedStories.tsx, StoryCard.tsx
-│   │   ├── StoryContentDisplay.tsx, ProfileHeader.tsx
+│   │   ├── HeroSection.tsx, FeaturedStories.tsx, FeaturedShowcase.tsx
+│   │   ├── StoryCard.tsx, StoryContentDisplay.tsx, ProfileHeader.tsx
 │   │   ├── StoryOfTheDay.tsx, WhoAreNewMuslims.tsx, WhatsNext.tsx
 │   │   ├── HomePageClient.tsx, PWAInstall.tsx, ServiceWorkerRegistration.tsx
-│   │   └── PlausibleAnalytics.tsx
+│   │   ├── LocalePersist.tsx, PlausibleAnalytics.tsx
+│   │   └── __tests__/Button.test.ts
 │   ├── hooks/            # Custom React hooks
-│   │   ├── useIntersectionObserver.ts
-│   │   ├── useMultipleIntersectionObserver.ts
-│   │   ├── useHasMounted.ts
-│   │   └── useStorySections.ts
+│   │   └── useHasMounted.ts
 │   ├── lib/              # Core business logic & utilities
-│   │   ├── stories.ts, story-parser.ts, story-service.ts
+│   │   ├── fonts.ts, metadata.ts, sanitize.ts
+│   │   ├── story-parser.ts, story-sections.ts, story-service.ts
+│   │   └── __tests__/    # Unit tests
 │   ├── stories/          # Markdown story files (~69 × 2 languages)
 │   ├── i18n/             # Internationalization configuration
 │   │   ├── routing.ts, request.ts
+│   ├── types/            # TypeScript type definitions
 │   └── proxy.ts          # i18n middleware (Next.js 16 proxy)
-├── PROJECT_MAP.md         # High-level project overview
-├── next.config.mjs        # Next.js configuration
-├── postcss.config.mjs     # PostCSS configuration
-└── eslint.config.mjs      # ESLint flat config
+├── review-plan.md        # Senior code review plan and findings
+├── AGENTS.md             # Agent guide with full project reference
+├── next.config.mjs       # Next.js configuration
+├── eslint.config.mjs     # ESLint flat config
+└── tsconfig.json         # TypeScript configuration
 ```
 
 ## Internationalization (i18n)
