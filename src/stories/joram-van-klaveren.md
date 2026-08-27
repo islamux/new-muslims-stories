@@ -3,6 +3,7 @@ title: "From Critic to Convert: The Story of Joram Van Klaveren"
 author: "Joram Van Klaveren"
 date: "2019-10-28"
 image: "https://source.unsplash.com/random/800x600?sig=593"
+language: "en"
 ---
 
 A powerful story of reversion to Islam is that of former Dutch politician Joram Van Klaveren. Once a staunch critic of Islam and a member of Geert Wilders' far-right, anti-Islam party, Van Klaveren's journey is a testament to the transformative power of seeking knowledge.

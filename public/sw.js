@@ -63,7 +63,7 @@ self.addEventListener('fetch', (event) => {
           }
 
           // Return offline page for HTML requests
-          if (event.request.headers.get('accept').includes('text/html')) {
+          if ((event.request.headers.get('accept') ?? '').includes('text/html')) {
             const offlineResponse = await cache.match(OFFLINE_URL);
             if (offlineResponse) {
               return offlineResponse;

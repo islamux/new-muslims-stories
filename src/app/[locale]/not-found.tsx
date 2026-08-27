@@ -9,7 +9,9 @@ export default function NotFound() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-900">
       <div className="max-w-md text-center">
-        <p className="mb-4 font-heading text-6xl font-bold text-green-600 dark:text-green-400">404</p>
+        <p className="mb-4 font-heading text-6xl font-bold text-green-600 dark:text-green-400">
+          404
+        </p>
         <h1 className="mb-4 font-heading text-3xl font-bold text-gray-900 dark:text-white">
           {t('title')}
         </h1>

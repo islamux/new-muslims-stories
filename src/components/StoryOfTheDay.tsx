@@ -11,7 +11,11 @@ export default function StoryOfTheDay({ story }: StoryOfTheDayProps) {
   const commonT = useTranslations('Common');
 
   const excerpt = useMemo(
-    () => story.contentHtml.replace(/<[^>]*>/g, '').trim().slice(0, 220),
+    () =>
+      story.contentHtml
+        .replace(/<[^>]*>/g, '')
+        .trim()
+        .slice(0, 220),
     [story.contentHtml],
   );
 

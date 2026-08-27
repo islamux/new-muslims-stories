@@ -59,11 +59,7 @@ export default function ThemeToggle() {
       title={`${nextLabel} ${t('theme')}`}
       className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-ink-soft transition-colors hover:border-gilt-400 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-60 dark:hover:text-emerald-300"
     >
-      {isDark ? (
-        <MoonIcon className="h-5 w-5" />
-      ) : (
-        <SunIcon className="h-5 w-5" />
-      )}
+      {isDark ? <MoonIcon className="h-5 w-5" /> : <SunIcon className="h-5 w-5" />}
     </button>
   );
 }

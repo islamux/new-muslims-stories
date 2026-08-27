@@ -22,11 +22,7 @@ function StorySection({ title, content, index }: StorySectionProps) {
   const isMoment = index === 1;
 
   return (
-    <section
-      className={
-        isMoment ? 'border-s-2 border-gilt-400 ps-5 sm:ps-6' : undefined
-      }
-    >
+    <section className={isMoment ? 'border-s-2 border-gilt-400 ps-5 sm:ps-6' : undefined}>
       <h2
         className={`mb-4 font-heading text-2xl font-bold sm:text-3xl ${
           isMoment ? 'text-gilt-600' : 'text-emerald-700 dark:text-emerald-300'
@@ -89,16 +85,10 @@ export default function StoryContentDisplay({ story, prev, next }: StoryContentD
         ))}
 
         {(prev || next) && (
-          <nav
-            aria-label={t('navigation')}
-            className="mt-14 border-t border-line pt-8"
-          >
+          <nav aria-label={t('navigation')} className="mt-14 border-t border-line pt-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
               {prev ? (
-                <Link
-                  href={`/stories/${prev.slug}`}
-                  className="group flex flex-1 flex-col"
-                >
+                <Link href={`/stories/${prev.slug}`} className="group flex flex-1 flex-col">
                   <span className="font-sans text-xs font-semibold uppercase tracking-wider text-gilt-600">
                     {t('previous')}
                   </span>

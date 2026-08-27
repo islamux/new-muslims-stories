@@ -40,8 +40,7 @@ const STRINGS: Record<OfflineLocale, OfflineStrings> = {
     description:
       'لا تقلق! لا يزال بإمكانك قراءة القصص المحفوظة. تحقق من اتصالك بالإنترنت وحاول مرة أخرى.',
     availableTitle: 'متاح دون اتصال',
-    availableDescription:
-      'القصص التي شاهدتها مسبقًا متاحة للقراءة دون اتصال بالإنترنت.',
+    availableDescription: 'القصص التي شاهدتها مسبقًا متاحة للقراءة دون اتصال بالإنترنت.',
     offlineEnabled: 'القراءة دون اتصال مفعّلة',
     tryAgain: 'حاول مرة أخرى',
     goHome: 'الذهاب إلى الصفحة الرئيسية',
@@ -57,11 +56,7 @@ function detectLocale(): OfflineLocale {
 const emptySubscribe = () => () => {};
 
 export default function OfflinePage() {
-  const locale = useSyncExternalStore<OfflineLocale>(
-    emptySubscribe,
-    detectLocale,
-    () => 'en',
-  );
+  const locale = useSyncExternalStore<OfflineLocale>(emptySubscribe, detectLocale, () => 'en');
   const s = STRINGS[locale];
 
   return (

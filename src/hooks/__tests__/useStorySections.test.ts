@@ -37,8 +37,7 @@ describe('useStorySections', () => {
   });
 
   it('handles headings with attributes', () => {
-    const html =
-      '<h2 id="x">A</h2><p>1</p><h2 class="y">B</h2><p>2</p><h2>C</h2><p>3</p>';
+    const html = '<h2 id="x">A</h2><p>1</p><h2 class="y">B</h2><p>2</p><h2>C</h2><p>3</p>';
     const result = useStorySections(html);
     expect(result.lifeBeforeIslam).toBe('<p>1</p>');
     expect(result.momentOfGuidance).toBe('<p>2</p>');

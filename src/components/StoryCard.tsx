@@ -10,7 +10,11 @@ export default function StoryCard({ story }: StoryCardProps) {
   const commonT = useTranslations('Common');
 
   const excerpt = useMemo(
-    () => story.contentHtml.replace(/<[^>]*>/g, '').trim().slice(0, 140),
+    () =>
+      story.contentHtml
+        .replace(/<[^>]*>/g, '')
+        .trim()
+        .slice(0, 140),
     [story.contentHtml],
   );
 

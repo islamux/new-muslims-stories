@@ -41,7 +41,12 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   return (
     <html lang={locale} dir={dir} className={fontVariables} suppressHydrationWarning>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
           <NextIntlClientProvider messages={messages} locale={locale} timeZone={timeZone}>
             {children}
             <PWAInstall />

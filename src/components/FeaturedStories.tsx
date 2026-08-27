@@ -25,10 +25,7 @@ export default function FeaturedStories({ stories }: FeaturedStoriesProps) {
       const firstName = (s.firstName ?? '').toLowerCase();
       const country = (s.country ?? '').toLowerCase();
       const matchesCountry = !selectedCountry || s.country === selectedCountry;
-      return (
-        matchesCountry &&
-        (title.includes(q) || firstName.includes(q) || country.includes(q))
-      );
+      return matchesCountry && (title.includes(q) || firstName.includes(q) || country.includes(q));
     });
   }, [stories, selectedCountry, query]);
 

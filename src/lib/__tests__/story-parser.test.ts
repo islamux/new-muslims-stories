@@ -29,11 +29,7 @@ describe('story-parser', () => {
     });
 
     it('prefers firstName over author when both are present', () => {
-      const result = normalizeStoryData(
-        { firstName: 'Ahmed', author: 'Ahmed Ali' },
-        'ahmed',
-        '',
-      );
+      const result = normalizeStoryData({ firstName: 'Ahmed', author: 'Ahmed Ali' }, 'ahmed', '');
       expect(result.firstName).toBe('Ahmed');
     });
 
