@@ -51,6 +51,24 @@ export function normalizeStoryData(
 }
 
 /**
+ * Validates frontmatter has required fields. Logs warnings for missing data
+ * but does not throw — normalizeStoryData provides safe defaults.
+ */
+function validateFrontmatter(
+  data: Record<string, unknown>,
+  fileName: string,
+): void {
+  const missing: string[] = [];
+  if (!data.title) missing.push('title');
+  if (!data.author && !data.firstName) missing.push('author/firstName');
+  if (!data.language) missing.push('language');
+  if (!data.country) missing.push('country');
+  if (missing.length > 0) {
+    console.warn(`[story-parser] ${fileName}: missing frontmatter fields: ${missing.join(', ')}`);
+  }
+}
+
+/**
  * Parses a single markdown file into StoryData
  */
 export async function parseStoryFile(fileName: string): Promise<StoryData> {
@@ -61,6 +79,8 @@ export async function parseStoryFile(fileName: string): Promise<StoryData> {
 
   // Use gray-matter to parse the story metadata section
   const matterResult = matter(fileContents);
+
+  validateFrontmatter(matterResult.data, fileName);
 
   // Use remark to convert markdown into HTML string
   const processedContent = await remark().use(html).process(matterResult.content);

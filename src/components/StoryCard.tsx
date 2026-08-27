@@ -30,7 +30,7 @@ export default function StoryCard({ story }: StoryCardProps) {
       <h3 className="mb-2 font-heading text-lg font-bold leading-snug text-ink">
         <Link
           href={`/stories/${story.slug}`}
-          className="after:absolute after:inset-0 hover:text-emerald-700 dark:hover:text-emerald-300"
+          className="hover:text-emerald-700 dark:hover:text-emerald-300"
         >
           {story.title}
         </Link>

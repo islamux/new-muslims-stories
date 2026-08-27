@@ -1,4 +1,4 @@
-const CACHE_NAME = 'new-muslim-stories-v1';
+const CACHE_NAME = 'new-muslim-stories-v0.1.0';
 const OFFLINE_URL = '/offline';
 
 // Critical resources to cache on install
@@ -200,7 +200,14 @@ self.addEventListener('notificationclick', (event) => {
 
   if (event.action === 'explore') {
     event.waitUntil(
-      self.clients.openWindow('/en')
+      self.clients.matchAll({ type: 'window' }).then((clients) => {
+        const client = clients.find((c) => c.visibilityState === 'visible');
+        if (client) {
+          client.focus();
+        } else {
+          self.clients.openWindow('/');
+        }
+      })
     );
   }
 });
