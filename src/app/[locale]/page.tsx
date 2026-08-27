@@ -8,10 +8,8 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   // Enable static rendering
   setRequestLocale(locale);
 
-  const [stories, featuredStories] = await Promise.all([
-    StoryService.getSortedStoriesData(locale),
-    StoryService.getFeaturedStories(locale, 6),
-  ]);
+  const stories = await StoryService.getSortedStoriesData(locale);
+  const featuredStories = stories.filter((s) => s.featured).slice(0, 6);
 
   return <HomePageClient stories={stories} featuredStories={featuredStories} />;
 }

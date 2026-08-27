@@ -18,8 +18,6 @@
     "whatsNext": "ماذا بعد؟",
     "whatsNextDescription": "إذا ألهمتك هذه القصص وترغب في معرفة المزيد عن الإسلام أو التواصل مع المجتمعات الإسلامية المحلية، فإليك بعض الموارد.",
     "contactCenters": "اتصل بالمراكز الإسلامية",
-    "dailyStoryTitle": "عنوان القصة اليومية المميزة",
-    "dailyStoryExcerpt": "مقتطف موجز من قصة اليوم الملهمة.",
     "allStories": "جميع القصص",
     "footerCopyright": "{year} اكتشف الإسلام. جميع الحقوق محفوظة."
   },
@@ -47,13 +45,6 @@
     "learnMore": "اعرف المزيد",
     "yearsOldFrom": "{age} سنة، من {country}",
     "previousReligion": "الديانة السابقة: {religion}",
-    "installAppTitle": "تثبيت التطبيق",
-    "installAppDescription": "ثبت قصص المسلمين الجدد للقراءة دون اتصال بالإنترنت والوصول الأسرع",
-    "installFeatureOfflineReading": "قراءة القصص دون اتصال",
-    "installFeatureFasterLoading": "تحميل أسرع",
-    "installFeatureHomeScreenAccess": "الوصول من الشاشة الرئيسية",
-    "installButton": "تثبيت",
-    "notNowButton": "ليس الآن",
     "theme": "المظهر",
     "light": "فاتح",
     "dark": "داكن"

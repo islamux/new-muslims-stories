@@ -17,7 +17,12 @@ export default [
       '@next/next': next,
       'jsx-a11y': jsxA11y,
       import: importPlugin
-    }
+    },
+    settings: {
+      react: {
+        version: '19.1.0',
+      },
+    },
   },
   {
     languageOptions: {

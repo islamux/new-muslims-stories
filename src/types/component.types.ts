@@ -1,6 +1,6 @@
 // Component prop type definitions
 
-import type { Locale, StoryData } from './story.types';
+import type { StoryData } from './story.types';
 
 // Common prop types
 export interface WithClassName {
@@ -10,13 +10,6 @@ export interface WithClassName {
 export interface WithId {
   id?: string;
 }
-
-export interface WithChildren {
-  children: React.ReactNode;
-}
-
-// Theme type
-export type Theme = 'light' | 'dark';
 
 // Button component props
 export type ButtonVariant = 'primary' | 'ghost' | 'link';
@@ -59,18 +52,6 @@ export interface SectionProps extends WithClassName, WithId {
 export interface HomePageClientProps {
   stories: StoryData[];
   featuredStories: StoryData[];
-}
-
-// Language switcher props (for future extensibility)
-export interface LanguageSwitcherProps {
-  currentLocale: Locale;
-  onLocaleChange?: (locale: Locale) => void;
-}
-
-// Theme toggle props (for future extensibility)
-export interface ThemeToggleProps {
-  initialTheme?: Theme;
-  onThemeChange?: (theme: Theme) => void;
 }
 
 // Profile header component props

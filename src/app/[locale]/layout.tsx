@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { ThemeProvider } from 'next-themes';
 import PlausibleAnalytics from '@/components/PlausibleAnalytics';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
+import LocalePersist from '@/components/LocalePersist';
 import PWAInstall from '@/components/PWAInstall';
 import { routing } from '@/i18n/routing';
 import { hasLocale } from 'next-intl';
@@ -56,6 +57,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           <PlausibleAnalytics />
         </Suspense>
         <ServiceWorkerRegistration />
+        <LocalePersist locale={locale} />
       </body>
     </html>
   );

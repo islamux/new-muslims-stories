@@ -68,7 +68,7 @@ export default function PWAInstall() {
   if (!showInstallPrompt || !installPrompt) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-sm">
+    <div className="fixed bottom-4 inset-inline-start-4 z-50 md:inset-inline-end-4 md:inset-inline-start-auto md:max-w-sm">
       <div className="animate-in slide-in-from-bottom-5 rounded-lg border border-line bg-panel p-4 shadow-xl">
         <div className="mb-3 flex items-start">
           <Star size={30} className="flex-shrink-0 text-gilt-500" aria-hidden="true" />

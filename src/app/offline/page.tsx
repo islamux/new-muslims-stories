@@ -50,6 +50,12 @@ const STRINGS: Record<OfflineLocale, OfflineStrings> = {
 
 function detectLocale(): OfflineLocale {
   if (typeof navigator === 'undefined') return 'en';
+  try {
+    const stored = localStorage.getItem('locale');
+    if (stored === 'ar' || stored === 'en') return stored;
+  } catch {
+    // localStorage unavailable
+  }
   return navigator.language.toLowerCase().startsWith('ar') ? 'ar' : 'en';
 }
 

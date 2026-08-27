@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import type { SectionProps } from '@/types/component.types';
 

@@ -18,8 +18,6 @@
     "whatsNext": "What's Next?",
     "whatsNextDescription": "If you are inspired by these stories and wish to learn more about Islam or connect with local Islamic communities, here are some resources.",
     "contactCenters": "Contact Islamic Centers",
-    "dailyStoryTitle": "Daily Featured Story Title",
-    "dailyStoryExcerpt": "A brief excerpt from today's inspiring story.",
     "allStories": "All Stories",
     "footerCopyright": "{year} Discover Islam. All Rights Reserved."
   },
@@ -47,13 +45,6 @@
     "learnMore": "Learn More",
     "yearsOldFrom": "{age} years old, from {country}",
     "previousReligion": "Previous Religion: {religion}",
-    "installAppTitle": "Install App",
-    "installAppDescription": "Install New Muslim Stories for offline reading and faster access",
-    "installFeatureOfflineReading": "Read stories offline",
-    "installFeatureFasterLoading": "Faster loading",
-    "installFeatureHomeScreenAccess": "Home screen access",
-    "installButton": "Install",
-    "notNowButton": "Not Now",
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark"

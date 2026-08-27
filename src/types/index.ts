@@ -6,6 +6,3 @@ export * from './story.types';
 
 // Component prop types
 export * from './component.types';
-
-// Custom hook types
-export * from './hook.types';
