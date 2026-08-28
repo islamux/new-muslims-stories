@@ -1,7 +1,7 @@
 import { ReactNode, Suspense } from 'react';
 import { getMessages, getTimeZone, setRequestLocale } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
-import { ThemeProvider } from 'next-themes';
+import ThemeProvider from '@/components/ThemeProvider';
 import PlausibleAnalytics from '@/components/PlausibleAnalytics';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import LocalePersist from '@/components/LocalePersist';
