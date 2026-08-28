@@ -1,0 +1,2 @@
+- is the project ready for migrate to database 
+- pnpm version vercel , in the project dependencies  .. is it best practice ? or it should do some thing like remove the version of pnpm , deltet the vercel from dependencies. 
