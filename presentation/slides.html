@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>New Muslim Stories — عرض تقني</title>
+<style>
+  :root {
+    --green: #0f5c3e;
+    --green-dark: #093d29;
+    --green-light: #1f8a5e;
+    --cream: #faf6ec;
+    --cream-dark: #f0e9d8;
+    --accent: #c8a24a;
+    --accent-dark: #a9852f;
+    --ink: #1d241f;
+    --ink-soft: #4d5a51;
+    --line: #dcd2bc;
+    --display: "Palatino Linotype", "Book Antiqua", Palatino, "Noto Naskh Arabic", "Times New Roman", serif;
+    --body: "Segoe UI", Tahoma, "Noto Naskh Arabic", Arial, sans-serif;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --trans: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: var(--body);
+    background: var(--cream);
+    color: var(--ink);
+    overflow: hidden;
+  }
+
+  /* ===== Deck stage ===== */
+  #stage {
+    position: fixed;
+    inset: 0;
+  }
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 7vw, 7rem);
+    padding-top: clamp(2.5rem, 8vh, 5.5rem);
+    padding-bottom: clamp(4.5rem, 11vh, 6rem);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(0);
+    transition: opacity var(--trans), visibility var(--trans);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(15, 92, 62, 0.08), transparent 60%),
+      var(--cream);
+  }
+  .slide.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  .slide.scrollable-right { animation: slideInR 0.4s var(--trans); }
+  .slide.scrollable-left { animation: slideInL 0.4s var(--trans); }
+
+  @keyframes slideInR {
+    from { transform: translateX(40px); opacity: 0; }
+    to   { transform: translateX(0);   opacity: 1; }
+  }
+  @keyframes slideInL {
+    from { transform: translateX(-40px); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+  }
+
+  /* ===== Signature: data path ===== */
+  .datapath {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: var(--cream-dark);
+    overflow: hidden;
+  }
+  .datapath-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--green), var(--green-light), var(--accent));
+    transition: width 0.6s ease;
+  }
+  .datapath-rail {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 2rem;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: rgba(250, 246, 236, 0.75);
+    font-family: var(--mono);
+    font-size: clamp(0.6rem, 1.2vw, 0.78rem);
+    color: var(--ink-soft);
+    direction: ltr;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 0 rgba(15, 92, 62, 0.06);
+  }
+  .datapath-rail .seg {
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    background: var(--cream-dark);
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .datapath-rail .seg.hot {
+    background: var(--green);
+    color: #fff;
+    border-color: var(--green-dark);
+    box-shadow: 0 2px 6px rgba(15, 92, 62, 0.3);
+  }
+  .datapath-rail .seg.mid {
+    background: #e5efe8;
+    color: var(--green-dark);
+  }
+  .datapath-rail .arrow {
+    color: var(--accent-dark);
+    font-weight: bold;
+  }
+  .datapath-rail .end {
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  /* ===== Content typography ===== */
+  .slide > .content {
+    max-width: 1050px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .kicker {
+    font-family: var(--mono);
+    font-size: clamp(0.65rem, 1.3vw, 0.8rem);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    margin-bottom: 0.6rem;
+  }
+  h1, h2.pagetitle {
+    font-family: var(--display);
+    font-weight: 700;
+    color: var(--green-dark);
+    line-height: 1.15;
+  }
+  h1 { font-size: clamp(1.9rem, 5vw, 3.3rem); margin-bottom: 0.75rem; }
+  h2.pagetitle { font-size: clamp(1.5rem, 4vw, 2.6rem); margin-bottom: 1.1rem; position: relative; }
+  h2.pagetitle::after {
+    content: "";
+    display: block;
+    width: 64px; height: 4px;
+    margin-top: 0.6rem;
+    background: linear-gradient(90deg, var(--green), var(--accent));
+    border-radius: 2px;
+  }
+  h3 { font-family: var(--display); font-size: 1.25rem; color: var(--green); margin: 1.3rem 0 0.5rem; }
+  p, li { font-size: clamp(1rem, 2.1vw, 1.35rem); line-height: 1.75; color: var(--ink); }
+  .lead { font-size: clamp(1.05rem, 2.3vw, 1.5rem); color: var(--ink-soft); line-height: 1.8; }
+  .muted { color: var(--ink-soft); }
+  strong { color: var(--green-dark); }
+  em { color: var(--accent-dark); }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-inline-start: 4px solid var(--green);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem;
+    box-shadow: 0 1px 3px rgba(15, 92, 62, 0.06);
+  }
+  .card.accent { border-inline-start-color: var(--accent); }
+  .card h4 { font-family: var(--display); color: var(--green-dark); margin-bottom: 0.4rem; font-size: 1.1rem; }
+
+  /* stat strip */
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1.2rem 0;
+  }
+  .stat {
+    flex: 1 1 140px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1rem 0.5rem;
+  }
+  .stat .num {
+    font-family: var(--display);
+    font-size: clamp(1.7rem, 4vw, 2.6rem);
+    font-weight: 700;
+    color: var(--green);
+    display: block;
+  }
+  .stat .lbl { font-size: 0.85rem; color: var(--ink-soft); }
+
+  /* code */
+  pre.code {
+    direction: ltr;
+    text-align: left;
+    background: #10241b;
+    color: #dff0e6;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+    font-family: var(--mono);
+    font-size: clamp(0.68rem, 1.4vw, 0.85rem);
+    line-height: 1.6;
+    box-shadow: 0 4px 14px rgba(15, 92, 62, 0.15);
+  }
+  pre.code .cm { color: #70a88d; }
+  code.inline {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    background: #e5efe8;
+    color: var(--green-dark);
+    padding: 0.1em 0.4em;
+    border-radius: 5px;
+    direction: ltr;
+    unicode-bidi: embed;
+  }
+  .ref {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent-dark);
+    direction: ltr;
+    display: inline-block;
+    unicode-bidi: isolate;
+  }
+  .ref::before { content: "↳ "; color: var(--ink-soft); }
+  .badge {
+    display: inline-block;
+    background: var(--green);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 20px;
+    margin-inline-end: 0.4rem;
+    vertical-align: middle;
+  }
+  .badge.warn { background: var(--accent-dark); }
+  .badge.red { background: #b3403a; }
+
+  ul.check li { list-style: none; position: relative; padding-inline-start: 1.4rem; }
+  ul.check li::before {
+    content: "✓";
+    position: absolute;
+    inset-inline-start: 0;
+    color: var(--green);
+    font-weight: bold;
+  }
+  ul.cross li { list-style: none; position: relative; padding-inline-start: 1.4rem; }
+  ul.cross li::before {
+    content: "✗";
+    position: absolute;
+    inset-inline-start: 0;
+    color: #b3403a;
+    font-weight: bold;
+  }
+
+  table.trade {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.2rem;
+    font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+  }
+  table.trade th, table.trade td {
+    border: 1px solid var(--line);
+    padding: 0.65rem 0.9rem;
+    text-align: start;
+    vertical-align: top;
+  }
+  table.trade th { background: var(--green); color: #fff; font-family: var(--display); }
+  table.trade tr:nth-child(even) td { background: #fff; }
+
+  .center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 100%; }
+  .center .datapath-rail { max-width: 900px; }
+  .subtitle { font-size: clamp(1.1rem, 2.4vw, 1.6rem); color: var(--ink-soft); margin-top: 0.4rem; }
+
+  .demo-box {
+    border: 2px solid var(--accent);
+    background: linear-gradient(180deg, #fbf5e6, #f5ecd5);
+    border-radius: 14px;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+  .demo-box .big { font-family: var(--display); font-size: clamp(1.6rem, 4vw, 2.4rem); color: var(--green-dark); }
+
+  .quote {
+    direction: ltr;
+    text-align: left;
+    font-family: var(--display);
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    color: var(--green-dark);
+    border-inline-start: 5px solid var(--accent);
+    padding-inline-start: 1.2rem;
+    margin: 1.2rem 0;
+  }
+
+  .flow-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin: 1.4rem 0;
+    direction: ltr;
+  }
+  .flow-diagram .node {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-inline-start: 4px solid var(--green);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-family: var(--mono);
+    font-size: clamp(0.7rem, 1.4vw, 0.88rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .flow-diagram .node .step { color: var(--ink-soft); font-size: 0.7em; }
+  .flow-diagram .node .fn { color: var(--green-dark); font-weight: bold; }
+  .flow-diagram .edge {
+    color: var(--accent-dark);
+    text-align: center;
+    font-size: 0.8rem;
+    font-family: var(--mono);
+    line-height: 1;
+  }
+
+  /* ===== nav UI ===== */
+  #controls {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 1.4rem;
+    background: rgba(250, 246, 236, 0.92);
+    backdrop-filter: blur(6px);
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    z-index: 20;
+  }
+  #controls button {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.45rem 1rem;
+    font-family: var(--body);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+  }
+  #controls button:hover { background: var(--green-light); }
+  #controls button:disabled { background: var(--line); cursor: default; color: #8b938d; }
+  #controls .side { display: flex; align-items: center; gap: 0.6rem; }
+  #count {
+    font-size: 0.9rem;
+    color: var(--green-dark);
+    font-weight: bold;
+  }
+  #controls .hint { font-size: 0.7rem; color: #8b938d; }
+  #fullscreenBtn { direction: ltr; }
+
+  /* ===== overview grid ===== */
+  #overview {
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 40, 28, 0.97);
+    z-index: 40;
+    display: none;
+    overflow-y: auto;
+    padding: 2.5rem;
+  }
+  #overview.open { display: block; }
+  #overview h3 { color: #fff; text-align: center; margin-bottom: 1.5rem; font-size: 1.6rem; }
+  #overview .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.8rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  #overview .ov-slide {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e8efe8;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 0.8rem;
+    cursor: pointer;
+    font-family: var(--body);
+    text-align: start;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    transition: background 0.2s;
+  }
+  #overview .ov-slide:hover { background: rgba(255, 255, 255, 0.22); }
+  #overview .ov-num { color: var(--accent); font-family: var(--mono); font-size: 0.7rem; display: block; margin-bottom: 0.2rem; }
+  #overview .close {
+    position: fixed;
+    top: 1.2rem;
+    inset-inline-end: 1.5rem;
+    background: var(--accent);
+    color: #1d241f;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.1rem;
+    cursor: pointer;
+    font-family: var(--body);
+  }
+
+  /* ===== notes ===== */
+  #notesPanel {
+    position: fixed;
+    bottom: 3.4rem;
+    inset-inline-start: 1.2rem;
+    max-width: 420px;
+    background: #10241b;
+    color: #e8efe8;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    z-index: 30;
+    display: none;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  #notesPanel.open { display: block; }
+  #notesPanel .label { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+  #notesPanel .close-note {
+    position: absolute;
+    top: 0.5rem;
+    inset-inline-end: 0.6rem;
+    background: none;
+    border: none;
+    color: #e8efe8;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  /* ===== print ===== */
+  @media print {
+    body { overflow: visible; background: #fff; }
+    #controls, #overview, #notesPanel { display: none !important; }
+    /* keep the signature data-path rail (motif) visible; hide the thin progress bar only */
+    .datapath { display: none !important; }
+    .datapath-rail {
+      display: flex !important;
+      border: 1px solid #dcd2bc;
+      background: #faf6ec;
+      margin-bottom: 1.5rem;
+    }
+    .slide {
+      position: relative !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+      page-break-after: always;
+      min-height: 100vh;
+      margin: 0;
+      padding: 3rem !important;
+      box-shadow: none;
+      background: #fff !important;
+    }
+    .slide.active { animation: none; }
+    body { overflow: visible; }
+  }
+
+  /* ===== responsive ===== */
+  @media (max-width: 640px) {
+    .slide { padding: 4.5rem 1.2rem 5rem; }
+    #controls { padding: 0.5rem 0.7rem; font-size: 0.7rem; }
+    #controls .hint { display: none; }
+    #prevBtn, #nextBtn { padding: 0.35rem 0.7rem; }
+    .grid2 { grid-template-columns: 1fr; }
+  }
+
+  /* ===== reduced motion ===== */
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+    .slide { transition: opacity 0s, visibility 0s; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- ============ SLIDE 1 : Title ============ -->
+<section class="slide active" data-title="العنوان">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="datapath-rail">
+    <span class="seg hot">src/stories/*.md</span><span class="arrow">→</span>
+    <span class="seg hot">gray-matter</span><span class="arrow">→</span>
+    <span class="seg hot">remark</span><span class="arrow">→</span>
+    <span class="seg hot">sanitize</span><span class="arrow">→</span>
+    <span class="seg hot">SSG</span><span class="arrow">→</span>
+    <span class="seg end">HTML ⇒ sw.js</span>
+  </div>
+  <div class="content center">
+    <div class="kicker">Technical Presentation · عرض تقني</div>
+    <h1>New Muslim Stories</h1>
+    <div class="subtitle">قصة قرارات هندسية، هجرة من Markdown إلى الويب</div>
+    <p class="muted" style="margin-top:1.4rem;">عرض تقني · ٦٠ دقيقة · Next.js 16 · bilingual (en/ar) · SSG</p>
+  </div>
+  <div class="notes">افتتاح: عرّف نفسك، واذكر أنها رحلة قرارات. فعّل وضع ملء الشاشة (F) ولوّح بـKeyboard. أشر إلى شريط مسار البيانات أعلى الشريحة — هذا سيظهر عبر العرض كله.</div>
+</section>
+
+<!-- ============ SLIDE 2 : المنتج ============ -->
+<section class="slide" data-title="المنتج">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">البداية · Foundation</div>
+    <h2 class="pagetitle">المُنتج</h2>
+    <p class="lead">بيلوغرافيا رقمية لقصص إسلام حقيقية، بلغتين.</p>
+    <div class="grid2">
+      <div class="card"><h4>قصص حقيقية</h4><p>قصص أشخاص اعتنقوا الإسلام؛ محتوى نوعي وملهم لا مُولّد تلقائياً.</p></div>
+      <div class="card accent"><h4>ثنائي اللغة</h4><p>كل قصة تُنشر بالإنجليزية والعربية (en/ar) على نحو متوازٍ.</p></div>
+      <div class="card"><h4>من Markdown</h4><p>كل قصة ملف <code class="inline">.md</code> بسيط مع frontmatter، بلا قاعدة بيانات.</p></div>
+      <div class="card accent"><h4>بلا خادم</h4><p>SSG: موقع ثابت جاهز على الحافة، لا حالة خادم تُدار يدوياً.</p></div>
+    </div>
+  </div>
+  <div class="notes">ملاحظة السرد: المنتج في جوهره أرشيف — لا تطبيق عالي التفاعلية. هذه البساطة توجّه كل قرار لاحق. أشر إلى أن كل بطاقة تعكس قراراً سنعود إليه.</div>
+</section>
+
+<!-- ============ SLIDE 3 : المشكلة ============ -->
+<section class="slide" data-title="المشكلة">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">الدافع · Motivation</div>
+    <h2 class="pagetitle">المشكلة</h2>
+    <p class="lead">القصص الأصلية متناثرة بين منصات متفرقة وغير ثنائية اللغة، ويصعب أرشفتها والوصول إليها دون اتصال.</p>
+    <div class="grid2">
+      <div class="card"><h4>تشتّت</h4><p>لا مصدر واحد موثوق للقصص بجودة متجانسة ورواية موحّدة.</p></div>
+      <div class="card accent"><h4>حواجز لغة</h4><p>الجمهور العربي والإنجليزي أفقه معلوماتي منفصل؛ نحتاج توأمة نصوص.</p></div>
+      <div class="card"><h4>أرشفة ضعيفة</h4><p>المحتوى الديني الحسّاس يحتاج استمرارية؛ لا معتمد على خادم ديناميكي.</p></div>
+      <div class="card accent"><h4>أداء القراءة</h4><p>قارئ القصة يريد سرعة تحميل فورية، حتى بضعف الشبكة.</p></div>
+    </div>
+  </div>
+  <div class="notes">صِغ المشكلة قبل الحل: لم نصدر "نحتاج Next.js"، بل "نحتاج أرشيفاً ثنائي اللغة يحتاج عنها". الحل الهندسي جاء لاحقاً ليخدم هذه الحاجة.</div>
+</section>
+
+<!-- ============ SLIDE 4 : أرقام ============ -->
+<section class="slide" data-title="أرقام">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">المقياس · Scale</div>
+    <h2 class="pagetitle">أرقام مُتحقق منها</h2>
+    <div class="stats">
+      <div class="stat"><span class="num">138</span><span class="lbl">ملفّ استوري</span></div>
+      <div class="stat"><span class="num">69</span><span class="lbl">English</span></div>
+      <div class="stat"><span class="num">69</span><span class="lbl">العربية</span></div>
+      <div class="stat"><span class="num">2</span><span class="lbl">locales</span></div>
+      <div class="stat"><span class="num">0</span><span class="lbl">API routes</span></div>
+    </div>
+    <p class="muted" style="margin-top:0.2rem;">138 ملف داخل <code class="inline">src/stories/</code> — كل قصة نسخة إنجليزية + عربية.</p>
+    <ul class="check" style="margin-top:1rem;">
+      <li><strong>لا API routes إطلاقاً</strong> — التوليد كامل وقت البناء (SSG).</li>
+      <li>كل صفحة تُولَّد مسبقاً إلى ملف HTML ثابت.</li>
+    </ul>
+  </div>
+  <div class="notes">أرقام مرجعية سريعة. شدّد على: "zero API routes" و"توليد كامل وقت البناء". هذا الرقم سيتكرر ضد قرارات لاحقة (لا خادم = لا مساحة هجوم).</div>
+</section>
+
+<!-- ============ SLIDE 5 : الأطروحة ============ -->
+<section class="slide" data-title="الأطروحة">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content center">
+    <div class="kicker">الأطروحة الحاكمة · Thesis</div>
+    <h2 class="pagetitle">الأطروحة</h2>
+    <div class="quote">“Markdown بوصفه قاعدة بيانات، وSSG بوصفه طبقة العرض، وبلا حالة خادم.”</div>
+    <p class="lead muted" style="direction:ltr; text-align:center;">Markdown as the database · SSG as the render layer · no server state</p>
+    <p style="margin-top:1.4rem;">الفكرة الواحدة التي تحكم كل قرار لاحق: <strong>المحتوى مصدر الحقيقة، والعرض مشتق منه.</strong></p>
+  </div>
+  <div class="notes">هذه "اللحظة الذهنية": كل التفاصيل التقنية القادمة ستُقاس مقابل هذه الجملة. إن تعارض قرار معها، أعِد النظر فيه.</div>
+</section>
+
+<!-- ============ SLIDE 6 : النتيجة ============ -->
+<section class="slide" data-title="النتيجة من الأطروحة">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">ماذا ينتج عن الأطروحة</div>
+    <h2 class="pagetitle">النتيجة من الأطروحة</h2>
+    <div class="grid2">
+      <div class="card"><h4>أمان بالتصميم</h4><p>بلا خادم، لا endpoints تُهاجَم ولا قاعدة بيانات تُخترق. أصغر سطح هجوم.</p></div>
+      <div class="card accent"><h4>سرعة قراءة</h4><p>HTML جاهز على الحافة؛ أول بايت بلا حسابات خادم.</p></div>
+      <div class="card"><h4>أرشفة بسيطة</h4><p>النسخة الاحتياطية = مجلد <code class="inline">src/stories</code> قابل للـgit ونسخ.</p></div>
+      <div class="card accent"><h4>ترحيل سهل</h4><p>المحتوى عالق في Markdown لا في نظام ملكي CMS.</p></div>
+    </div>
+    <h3>لكن — مقايضة معلنة</h3>
+    <p>خسرنا الإدارة الديناميكية والتفاعل القائم على الخادم. سنعود لهذه المقايضة في شريحة <em>المقايضات</em>.</p>
+  </div>
+  <div class="notes">لا تبيع الأطروحة دون ذكر الثمن — المصداقية التقنية تبدأ بالاعتراف بالمقايضة مبكراً.</div>
+</section>
+
+<!-- ============ SLIDE 7 : قرارات 1 ============ -->
+<section class="slide" data-title="قرارات 1: Next.js">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">رحلة القرارات · 1/4</div>
+    <h2 class="pagetitle">لماذا Next.js 16 + App Router</h2>
+    <p class="lead">الترحيل من 14→16، وكل صفحة server component افتراضياً.</p>
+    <pre class="code"><span class="cm">// package.json (مُلخّص من dependencies + devDependencies)</span>
+{
+  <span class="cm">// :22</span> "next": "^16.2.9",
+  <span class="cm">// :25</span> "react": "^19.2.7",
+  <span class="cm">// :23</span> "next-intl": "^4.13.0",
+  <span class="cm">// :54 devDependencies</span> "tailwindcss": "^4.3.2"
+}</pre>
+    <p>
+      <span class="ref">package.json:22</span>
+      <span class="ref">docs/NEXTJS_16_MIGRATION_REPORT.md</span>
+    </p>
+    <ul class="check">
+      <li>App Router → server components افتراضية لكل <code class="inline">page.tsx</code>.</li>
+      <li>SSG من الدرجة الأولى عبر <code class="inline">generateStaticParams</code>.</li>
+    </ul>
+  </div>
+  <div class="notes">اشرح أننا عمداً لم نذكر "لماذا Next أصلاً" — قابلنا به؛ يكفي أن النسخة 16 مع App Router تجعل SSG + server-first سلوكاً افتراضياً، وهو ما يطابق الأطروحة.</div>
+</section>
+
+<!-- ============ SLIDE 8 : قرارات 2 i18n ============ -->
+<section class="slide" data-title="قرارات 2: i18n">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">رحلة القرارات · 2/4</div>
+    <h2 class="pagetitle">i18n مع next-intl دون مجلد i18n</h2>
+    <pre class="code"><span class="cm">// src/i18n/routing.ts:3-9</span>
+export const routing = defineRouting({
+  locales: ['en', 'ar'],
+  defaultLocale: 'en',
+});</pre>
+    <pre class="code"><span class="cm">// src/proxy.ts:1-15 — Next 16 middleware rename</span>
+import createMiddleware from 'next-intl/middleware';
+export default createMiddleware({
+  locales: ['en', 'ar'],
+  defaultLocale: 'en',
+});
+export const config = { matcher: ['/((?!api|_next|.*\\..*).*)'] };</pre>
+    <p><span class="ref">src/i18n/routing.ts:3-9</span> <span class="ref">src/i18n/request.ts</span> <span class="ref">src/proxy.ts:1-15</span> <span class="ref">next.config.mjs:1-3</span></p>
+    <p class="muted">في Next 16 أُعيدت تسمية middleware إلى proxy — نتعامل مع الواقع الجديد.</p>
+  </div>
+  <div class="notes">نقطة تقنية رائعة للجمهور التقني: إعادة تسمية middleware إلى proxy في Next 16، وأثرها على next-intl (ملف src/proxy.ts بدل middleware.ts). لاحظ متطلب config.matcher.</div>
+</section>
+
+<!-- ============ SLIDE 9 : قرارات 3 Markdown ============ -->
+<section class="slide" data-title="قرارات 3: خط Markdown">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">رحلة القرارات · 3/4</div>
+    <h2 class="pagetitle">خط معالجة Markdown</h2>
+    <p class="lead">لماذا Markdown بدلاً من CMS/قاعدة بيانات؟ لأنّه نسخة قابلة للتحكّم والgit من المحتوى.</p>
+    <pre class="code"><span class="cm">// src/lib/story-parser.ts:74-91</span>
+export async function parseStoryFile(fileName: string): Promise&lt;StoryData&gt; {
+  const slug = extractSlug(fileName);
+  const fullPath = path.join(storiesDirectory, fileName);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+  <span class="cm">// gray-matter</span>
+  const matterResult = matter(fileContents);
+  validateFrontmatter(matterResult.data, fileName);
+  <span class="cm">// remark</span>
+  const processedContent = await remark().use(html).process(matterResult.content);
+  const rawHtml = processedContent.toString();
+  <span class="cm">// sanitize</span>
+  const contentHtml = sanitizeHtmlServer(rawHtml);
+  return normalizeStoryData(matterResult.data, slug, contentHtml);
+}</pre>
+    <p><span class="ref">src/lib/story-parser.ts:74-91</span> <span class="ref">:81 gray-matter</span> <span class="ref">:86 remark</span> <span class="ref">:88 sanitize</span></p>
+  </div>
+  <div class="notes">اشرح القرار بالترتيب: gray-matter للـfrontmatter، remark للتحويل، remark-html للـHTML، ثم DOMPurify للتعقيم. لماذا لا CMS؟ لأن القصص 69 ملفاً تُكتب بالنص — CMS مضاف بلا حاجة (YAGNI).</div>
+</section>
+
+<!-- ============ SLIDE 10 : قرارات 4 Tailwind ============ -->
+<section class="slide" data-title="قرارات 4: Tailwind">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">رحلة القرارات · 4/4</div>
+    <h2 class="pagetitle">Tailwind v4 + next-themes + PWA</h2>
+    <p class="lead">واجهة حديثة + وضع داكن + تثبيت/أوفلاين — كلها بلا خادم.</p>
+    <div class="grid2">
+      <div class="card"><h4>Tailwind CSS v4</h4><p>توليد أدوات مساعدة وقت البناء عبر <code class="inline">@tailwindcss/postcss</code>.</p></div>
+      <div class="card accent"><h4>next-themes</h4><p>وضع داكن/فاتح عبر <code class="inline">attribute="class"</code>.</p></div>
+      <div class="card"><h4>PWA</h4><p>Service Worker + manifest → تثبيت وأوفلاين.</p></div>
+      <div class="card accent"><h4>أنيميشن</h4><p>CSS transitions + Tailwind animations (لا مكتبة JS للحركة).</p></div>
+    </div>
+    <p class="muted">المنتج يبقى موقعاً ثابتاً حتى مع هذه الطبقات الزخرفية.</p>
+  </div>
+  <div class="notes">هذه شريحة "الوجه" — ما يراه المستخدم. لكن حافظ على الرسالة: كل زخرفة فوق SSG وليس بديلاً عنه.</div>
+</section>
+
+<!-- ============ SLIDE 11 : النموذج الذهني ============ -->
+<section class="slide" data-title="النموذج الذهني">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">النموذج الذهني · Mental Model</div>
+    <h2 class="pagetitle">مخطط تدفق البيانات</h2>
+    <div class="flow-diagram">
+      <div class="node"><span class="fn">src/stories/*.md</span><span class="step">138 ملف (69 en + 69 ar)</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">gray-matter</span><span class="step">strip frontmatter → metadata</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">remark (+ remark-html)</span><span class="step">Markdown → HTML string</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">sanitizeHtmlServer (DOMPurify)</span><span class="step">allow-list 24 tags / 7 attrs</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">story-service</span><span class="step">getSorted / allSlugs / featured</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">generateStaticParams</span><span class="step">SSG at build time → HTML</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">HTML ⇒ public/sw.js (cache)</span><span class="step">PWA offline</span></div>
+    </div>
+  </div>
+  <div class="notes">أهم شريحة في القسم: ربط كل القطع في مسار واحد. ارسمه حياً. هذا هو "مسار البيانات" الذي يظهر كشريط أعلى كل شريحة.</div>
+</section>
+
+<!-- ============ SLIDE 12 : تجربة 1 ============ -->
+<section class="slide" data-title="تجربة 1: الرئيسية">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">تجربة المُنتج · 1/3</div>
+    <h2 class="pagetitle">الصفحة الرئيسية</h2>
+    <pre class="code"><span class="cm">// src/app/[locale]/page.tsx:46-49</span>
+const stories = await StoryService.getSortedStoriesData(locale);
+const featuredStories = stories.filter((s) => s.featured).slice(0, 6);
+
+return &lt;HomePageClient stories={stories} featuredStories={featuredStories} /&gt;;</pre>
+    <p><span class="ref">src/app/[locale]/page.tsx:47</span> <span class="ref">:46</span></p>
+    <ul class="check">
+      <li><strong>Hero</strong> — عنوان وجملة تعريفيّة.</li>
+      <li><strong>Featured</strong> — حتى 6 قصص مميزة (أقصى حد).</li>
+      <li><strong>Story of the day</strong> — قصة اليوم.</li>
+      <li><strong>كل القصص</strong> — القائمة الكاملة الـ69.</li>
+    </ul>
+  </div>
+  <div class="notes">اشرح أن sidebar/server component تجلب البيانات وتُمرّرها إلى عميل. لاحظ slice(0,6) الخاص بالعناصر المميزة.</div>
+</section>
+
+<!-- ============ SLIDE 13 : تجربة 2 ============ -->
+<section class="slide" data-title="تجربة 2: صفحة القصة">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">تجربة المُنتج · 2/3</div>
+    <h2 class="pagetitle">صفحة القصة</h2>
+    <p>3 أقسام حسب بنية HTML: <strong>قبل الإسلام</strong> ← <strong>لحظة الهداية</strong> ← <strong>انعكاسات</strong>.</p>
+    <pre class="code"><span class="cm">// src/lib/story-sections.ts:12-28</span>
+export function getStorySections(contentHtml: string): StorySections {
+  const openings = contentHtml.split(/&lt;h[23][^&gt;]*&gt;/i);
+  const bodies: string[] = [];
+  for (let i = 1; i &lt; openings.length; i++) {
+    /* ... split on h2/h3, collect bodies */
+  }
+  return {
+    lifeBeforeIslam: bodies[0] ?? '',
+    momentOfGuidance: bodies[1] ?? '',
+    reflections: bodies.slice(2).join('\n'),
+  };
+}</pre>
+    <p><span class="ref">src/lib/story-sections.ts:12-28</span> <span class="ref">[slug]/page.tsx:77-79</span></p>
+    <ul class="check">
+      <li>تنقّل سابق/تالٍ مبني على الـindex:</li>
+    </ul>
+    <pre class="code"><span class="cm">// src/app/[locale]/stories/[slug]/page.tsx:77-79</span>
+const index = allStories.findIndex((s) => s.slug === slug);
+const prev = index &gt; 0 ? allStories[index - 1] : undefined;
+const next = index &gt;= 0 &amp;&amp; index &lt; allStories.length - 1 ? allStories[index + 1] : undefined;</pre>
+  </div>
+  <div class="notes">نقطة ودقّة: getStorySections لا تعتمد على مصفوفة ثابتة؛ تنتج 3 أقسام وتتدهور بأناقة عند نقص/زيادة العناوين. أظهر ذلك بالإشارة إلى ?? ''.</div>
+</section>
+
+<!-- ============ SLIDE 14 : تجربة 3 ============ -->
+<section class="slide" data-title="تجربة 3: RTL/thème/PWA">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">تجربة المُنتج · 3/3</div>
+    <h2 class="pagetitle">RTL، مبدّل الثيم، تثبيت PWA</h2>
+    <div class="grid2">
+      <div class="card"><h4>RTL</h4><p><code class="inline">layout.tsx:40</code> — <code class="inline">dir = locale === 'ar' ? 'rtl' : 'ltr'</code>.</p></div>
+      <div class="card accent"><h4>Theme Toggle</h4><p><code class="inline">src/components/ThemeToggle.tsx</code> — تخزين المحاولة على الحافة.</p></div>
+      <div class="card"><h4>PWA Install</h4><p><code class="inline">src/components/PWAInstall.tsx:20-119</code> — حوار إرشادي للتثبيت.</p></div>
+      <div class="card accent"><h4>Offline</h4><p><code class="inline">src/app/offline/page.tsx</code> — صفحة أوفلاين ثنائية اللغة.</p></div>
+    </div>
+    <p>
+      <span class="ref">src/app/[locale]/layout.tsx:40</span>
+      <span class="ref">src/components/PWAInstall.tsx:20-119</span>
+      <span class="ref">src/app/offline/page.tsx:21-49</span>
+    </p>
+  </div>
+  <div class="notes">أذكر أن RTL يُفعل عبر السمة dir وليس عبر قواعد CSS معكوسة. PWAInstall مؤجّل 5 ثوانٍ (PWAInstall.tsx:37) — قرار منظم لتجنب إزعاج مستخدم جديد.</div>
+</section>
+
+<!-- ============ SLIDE 15 : خريطة المسارات ============ -->
+<section class="slide" data-title="خريطة المسارات">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">الغوص التقني · Routes</div>
+    <h2 class="pagetitle">خريطة المسارات</h2>
+    <div class="grid2">
+      <div class="card"><h4>/en · /ar</h4><p>الصفحة الرئيسية لكل لغة (SSG).</p></div>
+      <div class="card"><h4>/en|ar/stories/[slug]</h4><p>صفحة القصة — تُولَّد لكل slug × locale.</p></div>
+      <div class="card"><h4>/offline</h4><p>صفحة الأوفلاين المستقلة.</p></div>
+      <div class="card accent"><h4>dynamicParams=false</h4><p>أي مسار غير مُولَّد مسبقاً يُرجع 404.</p></div>
+    </div>
+    <pre class="code"><span class="cm">// src/app/[locale]/stories/[slug]/page.tsx:7-11</span>
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return StoryService.getAllStorySlugs().map((entry) => entry.params);
+}</pre>
+    <p><span class="ref">[slug]/page.tsx:7</span> <span class="ref">:9-11</span></p>
+  </div>
+  <div class="notes">dynamicParams=false يعطي أمان المسارات ومتانة الـSSG: لا صفحات عشوائية، فقط ما نولّده فعلاً. اشرح أثر ذلك على أسئلة SEO/الفهرسة.</div>
+</section>
+
+<!-- ============ SLIDE 16 : SSG ============ -->
+<section class="slide" data-title="SSG">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">الغوص التقني · SSG</div>
+    <h2 class="pagetitle">Static Site Generation</h2>
+    <ul class="check">
+      <li><code class="inline">setRequestLocale</code> في كل page — يمكّن العرض الثابت لـnext-intl.</li>
+      <li><code class="inline">generateStaticParams</code> يولّد كل القصص وقت البناء.</li>
+      <li>ميتاديتا مبنية مسبقاً: <code class="inline">robots.ts</code> و<code class="inline">sitemap.ts</code>.</li>
+      <li>النتيجة: بنية HTML جاهزة لكل مسار معرّف.</li>
+    </ul>
+    <pre class="code"><span class="cm">// src/app/[locale]/layout.tsx:23-25</span>
+// Prerender both locales at build time (static rendering)
+export function generateStaticParams() {
+  return routing.locales.map((locale) =&gt; ({ locale }));
+}</pre>
+    <p><span class="ref">src/app/[locale]/layout.tsx:23-25</span> <span class="ref">:36</span></p>
+  </div>
+  <div class="notes">بيّن الربط: setRequestLocale + generateStaticParams = ميتاديتا كاملة مبنية وقت البناء لكل locale. لا كلمة عن CSR.</div>
+</section>
+
+<!-- ============ SLIDE 17 : حدود خادم/عميل ============ -->
+<section class="slide" data-title="حدود خادم/عميل">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">الغوص التقني · Server/Client boundary</div>
+    <h2 class="pagetitle">حدود خادم/عميل</h2>
+    <div class="stats">
+      <div class="stat"><span class="num">25</span><span class="lbl">ملف 'use client'</span></div>
+      <div class="stat"><span class="num">20+2+3</span><span class="lbl">components + ui + app-level</span></div>
+      <div class="stat"><span class="num">16</span><span class="lbl">مكوّن يستخدم useTranslations</span></div>
+      <div class="stat"><span class="num">1</span><span class="lbl">hook</span></div>
+    </div>
+    <ul class="check">
+      <li>كل ملف <code class="inline">'use client'</code> يعلن ذلك في <strong>السطر 1</strong>.</li>
+      <li>الصفحات (<code class="inline">page.tsx</code>) server components.</li>
+      <li><code class="inline">useTranslations</code> متاح للعميل والخادم (next-intl).</li>
+    </ul>
+    <p class="muted">الحد فكري لا تقني: ما يحتاج تفاعلاً/متغيّرات عميل فقط.</p>
+  </div>
+  <div class="notes">25 ملف عميل — أغلبها واجهة. شدّد على الشفافية: عرفنا أين يقع الحد ولماذا. الصفحات كلها components خادمة افتراضياً بلا توجيه إضافي.</div>
+</section>
+
+<!-- ============ SLIDE 18 : خط المعالجة ============ -->
+<section class="slide" data-title="خط المعالجة">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">الغوص التقني · Pipeline</div>
+    <h2 class="pagetitle">خط المعالجة المتسلسل</h2>
+    <pre class="code"><span class="cm">// src/lib/story-service.ts:16-20</span>
+const settled = await Promise.allSettled(
+  fileNames.map((fileName) =&gt; parseStoryFile(fileName))
+);
+settled
+  .filter((r): r is PromiseRejectedResult =&gt; r.status === 'rejected')
+  .forEach((r) =&gt; console.error('[StoryService] skipping unreadable story file:', r.reason));</pre>
+    <ul class="check">
+      <li><code class="inline">Promise.allSettled</code> يتخطّى الملفات التالفة دون تعطيل القائمة (story-service.ts:16-20).</li>
+      <li><code class="inline">normalizeStoryData</code> يفشل بأمان — كل حقل له افتراضي (<span class="ref">story-parser.ts:25-51</span>).</li>
+      <li><code class="inline">validateFrontmatter</code> يحذّر ولا يرمي (<span class="ref">:57-69</span>).</li>
+      <li>فرز أبجدي عبر <code class="inline">localeCompare</code> (<span class="ref">:28</span>).</li>
+    </ul>
+  </div>
+  <div class="notes">نقطة قوة تقنية: مقاومة الأخطاء دون إيقاف الموقع. ملف واحد تالف لا يُسقط القائمة — يُسجَّل ويُتخطّى. هذا قرار بناء مدروس، لا صدفة.</div>
+</section>
+
+<!-- ============ SLIDE 19 : التعقيم ============ -->
+<section class="slide" data-title="التعقيم">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">الغوص التقني · Sanitization</div>
+    <h2 class="pagetitle">التعقيم عبر DOMPurify على الخادم</h2>
+    <pre class="code"><span class="cm">// src/lib/sanitize.ts:1-12</span>
+import { JSDOM } from 'jsdom';
+import createDOMPurify from 'dompurify';
+
+let purify: DOMPurify | null = null;
+function getDOMPurify(): DOMPurify {
+  if (!purify) {
+    purify = createDOMPurify(new JSDOM('').window);
+  }
+  return purify;
+}</pre>
+    <p>
+      <span class="ref">src/lib/sanitize.ts:17-43</span> قائمة مسموحة 24 وسم
+      <span class="ref">:44</span> 7 سمات
+      <span class="ref">:45</span> ALLOW_DATA_ATTR=false
+    </p>
+    <p class="muted">رفض <code class="inline">data-*</code> = تقليص أسطح حقن عبر السمات المخصصة.</p>
+  </div>
+  <div class="notes">أشر إلى أن DOMPurify يحتاج DOM حقيقي، لذلك نستخدم jsdom على الخادم. importance: تعقيم وقت البناء وليس وقت الطلب → لا تكلفة خادم وقت التشغيل.</div>
+</section>
+
+<!-- ============ SLIDE 20 : HYDRATION 1 ============ -->
+<section class="slide" data-title="HYDRATION 1: تقديم الخادم">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">HYDRATION · 1/5</div>
+    <h2 class="pagetitle">ماذا يحسب الخادم — وماذا لا يصل إليه</h2>
+    <p class="lead">على الخادم لا يوجد <code class="inline">window</code> ولا <code class="inline">localStorage</code>. أي شيفرة تقرؤهما أثناء العرض الأول ستكسر وتمنع تزامن الـhydration.</p>
+    <pre class="code"><span class="cm">// src/app/[locale]/layout.tsx:43-50</span>
+&lt;html lang={locale} dir={dir} className={fontVariables} suppressHydrationWarning&gt;
+  ...
+  &lt;ThemeProvider attribute="class" defaultTheme="light" enableSystem
+    disableTransitionOnChange&gt;
+    ...</pre>
+    <p><span class="ref">src/app/[locale]/layout.tsx:43</span> <span class="ref">:45-50</span></p>
+    <p class="muted"><code class="inline">suppressHydrationWarning</code> على <code class="inline">&lt;html&gt;</code> لأن next-themes يعدّل class قبل/بعد الالتزام.</p>
+  </div>
+  <div class="notes">افتح قسم HYDRATION بحدود الخادم. شدّد: هذا ليس خدمة، بل فهم ما هو قادر على العرض على الخادم — استخدام window أثناء التقديم خطأ.</div>
+</section>
+
+<!-- ============ SLIDE 21 : HYDRATION 2 ============ -->
+<section class="slide" data-title="HYDRATION 2: HTML قبل JS">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">HYDRATION · 2/5</div>
+    <h2 class="pagetitle">HTML يصل ويُعرض قبل JS</h2>
+    <div class="flow-diagram">
+      <div class="node"><span class="fn">Server renders HTML</span><span class="step">كامل ومستقل</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">HTML reaches browser</span><span class="step">يُعرض فوراً، بلا JS</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">JS bundle loads</span><span class="step">ثم يبدأ React</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">Hydration</span><span class="step">إرفاق بالشجرة الموجودة</span></div>
+    </div>
+    <p class="muted">أول تقديم للعميل يجب أن <strong>يطابق</strong> شجرة الخادم تماماً — هذا شرط الـhydration وليس خياراً.</p>
+  </div>
+  <div class="notes">اشرح خط الزمن: المستخدم يرى المحتوى قبل تحميل JS كاملاً. هذا أصل سرعة القراءة على الخادم. أي اختلاف عن شجرة الخادم = mismatch.</div>
+</section>
+
+<!-- ============ SLIDE 22 : HYDRATION 3 ============ -->
+<section class="slide" data-title="HYDRATION 3: ما هي">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">HYDRATION · 3/5</div>
+    <h2 class="pagetitle">ما هي الـhydration</h2>
+    <p class="lead"><strong>إرفاق React بالشجرة الموجودة وإضافة معالجات الأحداث</strong> — ليست CSR تبدأ من DOM فارغ.</p>
+    <div class="card accent" style="margin-top:1rem;">
+      <p><code class="inline">useEffect</code> يعمل <strong>بعد الالتزام</strong>، ويمكنه عندها قراءة واجهات المتصفح وتحديث الحالة في تقديم لاحق <em>صالح</em>.</p>
+    </div>
+    <p>
+      أي تحديث للحالة بعد الـmount — مثل قراءة <code class="inline">window</code> أو <code class="inline">localStorage</code> — يجب أن يحدث داخل <code class="inline">useEffect</code> لا أثناء أول تقديم.
+    </p>
+  </div>
+  <div class="notes">جوهر: hydration ≠ CSR. React لا يعيد رسم كل شيء؛ يعلّق معالجات على العقد الموجودة. الفرق حاسم لفهم أخطاء mismatch.</div>
+</section>
+
+<!-- ============ SLIDE 23 : HYDRATION 4 ============ -->
+<section class="slide" data-title="HYDRATION 4: mismatch">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">HYDRATION · 4/5</div>
+    <h2 class="pagetitle">مثال خاطئ مقابل النمط الصحيح</h2>
+    <h3>خطأ: قراءة localStorage أثناء أول تقديم</h3>
+    <p>الخادم ينتج <code class="inline">dark</code> والعميل <code class="inline">light</code> → mismatch يرمي تحذير React.</p>
+    <h3>النمط الصحيح في المشروع فعلاً</h3>
+    <pre class="code"><span class="cm">// src/hooks/useHasMounted.ts:1-12</span>
+import { useEffect, useState } from 'react';
+export const useHasMounted = () =&gt; {
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() =&gt; {
+    setHasMounted(true);
+  }, []);
+  return hasMounted;
+};</pre>
+    <p><span class="ref">ThemeToggle.tsx:48-57</span> <span class="ref">src/hooks/useHasMounted.ts:1-12</span> <span class="ref">LocalePersist.tsx:5-15</span></p>
+    <h3>ولكن — بصراحة</h3>
+    <p><code class="inline">theme-console-filter.ts:1-18</code> <strong>يقمع تحذير React 19</strong>. إنها معالجة للأعراض لا للسبب.</p>
+  </div>
+  <div class="notes">الشفافية هنا ترفع المصداقية: بوّابة mounted هي الحل الصحيح لهذا النمط بعينه، لكن قمع تحذير React عبر filter هو معالجة أعراض يجب تقييمها بانتظام.</div>
+</section>
+
+<!-- ============ SLIDE 24 : HYDRATION 5 ============ -->
+<section class="slide" data-title="HYDRATION 5: تمييز+اختبار">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">HYDRATION · 5/5</div>
+    <h2 class="pagetitle">تمييز + ما اختُبر فعلاً</h2>
+    <div class="grid2">
+      <div class="card"><h4>Mismatch في أول تقديم</h4><p><strong>خطأ</strong> — شجرة الخادم والعميل اختلفتا قبل الالتزام.</p></div>
+      <div class="card accent"><h4>Update بعد useEffect</h4><p><strong>متوقع</strong> — تحديث حالة لاحق صالح بعد الالتزام.</p></div>
+    </div>
+    <h3>ماذا اختُبر فعلاً</h3>
+    <pre class="code"><span class="cm">// src/lib/__tests__/theme-console-filter.test.ts + sanitize.test.ts</span>
+<span class="cm">// => الإثبات من الاختبارات الموجودة (29 اختباراً تمر)</span></pre>
+    <p><span class="ref">src/lib/__tests__/theme-console-filter.test.ts</span> <span class="ref">src/lib/__tests__/sanitize.test.ts</span></p>
+    <p class="muted">الفرق: الـmismatch الأول خطأ حقيقي؛ التحديث بعد الـuseEffect سلوك صحي ومقصود.</p>
+  </div>
+  <div class="notes">لا تدّعِ أكثر مما نختبره. نختبر المنطق المعزول (filter, sanitize) لكن لا نختبر RTL شجرة hydration كاملة للمكوّنات. كن صريحاً بشأن حدود الاختبار.</div>
+</section>
+
+<!-- ============ SLIDE 25 : PWA ============ -->
+<section class="slide" data-title="PWA">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">الغوص التقني · PWA</div>
+    <h2 class="pagetitle">إستراتيجيات التخزين المؤقت</h2>
+    <div class="grid2">
+      <div class="card"><h4>Network-first — التنقّل</h4><p><span class="ref">public/sw.js:40-78</span> جرّب الشبكة أولاً، فالهبوط للـcache.</p></div>
+      <div class="card accent"><h4>Stale-while-revalidate — القصص</h4><p><span class="ref">public/sw.js:80-122</span> أعطِ المخبّأ وحدّث في الخلفية.</p></div>
+      <div class="card"><h4>Cache-first — الأصول</h4><p><span class="ref">public/sw.js:124-164</span> CSS/JS/صور من الـcache فوراً.</p></div>
+      <div class="card accent"><h4>التسجيل</h4><p><span class="ref">ServiceWorkerRegistration.tsx:5-37</span> <code class="inline">useEffect</code> + <code class="inline">navigator.serviceWorker.register('/sw.js')</code>.</p></div>
+    </div>
+    <p><span class="ref">public/sw.js:1</span> cache v0.1.0 · precache <span class="ref">:5-11</span></p>
+  </div>
+  <div class="notes">بسّط: كل إستراتيجية تخدم نوع طلب مختلف. الـSWR للقصص متعمد لأن القصص قليل تغيرها؛ network-first للتنقل لضمان حداثة الصفحات الرئيسية.</div>
+</section>
+
+<!-- ============ SLIDE 26 : الأمان ============ -->
+<section class="slide" data-title="الأمان">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">الغوص التقني · Security</div>
+    <h2 class="pagetitle">رؤوس CSP في next.config.mjs</h2>
+    <pre class="code"><span class="cm">// next.config.mjs:5-15</span>
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ');</pre>
+    <p><span class="ref">next.config.mjs:5-15</span> <span class="ref">:7</span></p>
+    <div class="card accent" style="margin-top:1rem;">
+      <h4>بصراحة — مقايضة معلنة</h4>
+      <p><code class="inline">'unsafe-inline'</code> و<code class="inline">'unsafe-eval'</code> في <code class="inline">script-src</code> (السطر 7) <strong>يُضعفان CSP</strong>. هذا ضروري حالياً لأدوات التطوير/شرائح معينة، لكنه ثمن معترف به في الخارطة الطريق.</p>
+    </div>
+  </div>
+  <div class="notes">لا تتظاهر بأن CSP مثالي. اذكر الثغرة (unsafe-inline/eval) واربطها بشريحة roadmap — الهدف رفعها عبر nonces مستقبلاً.</div>
+</section>
+
+<!-- ============ SLIDE 27 : الاختبار ============ -->
+<section class="slide" data-title="الاختبار">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">الغوص التقني · Testing</div>
+    <h2 class="pagetitle">الاختبار: vitest + 29 اختباراً</h2>
+    <div class="stats">
+      <div class="stat"><span class="num">5</span><span class="lbl">ملفات اختبار</span></div>
+      <div class="stat"><span class="num">29</span><span class="lbl">اختباراً تمر</span></div>
+      <div class="stat"><span class="num">1</span><span class="lbl">vitest.config.ts</span></div>
+      <div class="stat"><span class="num">jsdom</span><span class="lbl">environment</span></div>
+    </div>
+    <pre class="code"><span class="cm">// vitest.config.ts:1-16</span>
+export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
+  },
+  resolve: { alias: { '@': path.resolve(__dirname, './src') } },
+});</pre>
+    <p><code class="inline">pnpm test</code> ← تمر 29. <span class="ref">vitest.config.ts:1-16</span></p>
+    <h3>ما لا يُغطّى (بصراحة)</h3>
+    <ul class="cross">
+      <li>لا RTL لاختبار مكوّنات واجهة.</li>
+      <li>لا E2E.</li>
+    </ul>
+  </div>
+  <div class="notes">ركّز على حدود التغطية — المصداقية. نختبر المنطق النقي (story-parser, sections, sanitize, filter) بلا تغطية مكوّنات واجهة ولا E2E حتى الآن.</div>
+</section>
+
+<!-- ============ SLIDE 28 : DEMO DIVIDER ============ -->
+<section class="slide" data-title="نقطة الانتقال للعرض الحيّ">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content center">
+    <div class="kicker">نقطة تحوّل · DIVIDER</div>
+    <h2 class="pagetitle">إلى العرض الحيّ</h2>
+    <div class="demo-box">
+      <div class="big">ننتقل الآن من الشرح إلى التشغيل المباشر</div>
+      <p class="muted" style="margin-top:0.8rem;">
+        للحصول على سيناريو العرض الكامل مع السكربت خطوة بخطوة:
+        <code class="inline">presentation/demo-script.md</code>
+      </p>
+    </div>
+    <p class="muted" style="margin-top:1.2rem;">أطفئ وضع الملء الشاشة، افتح المتصفح، ابدأ الإظهار المباشر.</p>
+  </div>
+  <div class="notes">هذه نقطة الفصل. أشِر للسيناريو: حدد السكربت، جرّب offline, theme toggle, RTL, install. ارجع للشرائح عند الأسئلة.</div>
+</section>
+
+<!-- ============ SLIDE 29 : المقايضات ============ -->
+<section class="slide" data-title="المقايضات">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">التوازن الهندسي</div>
+    <h2 class="pagetitle">المقايضات</h2>
+    <table class="trade">
+      <thead>
+        <tr><th>ماذا ربحنا</th><th>ماذا دفَعنا</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>SSG لأرشيف ثابت</td>
+          <td>لا قاعدة بيانات / لا محتوى ديناميكي في وقت التشغيل</td>
+        </tr>
+        <tr>
+          <td>توليد وقت البناء + أمان بالتصميم</td>
+          <td>تغييرات المحتوى تتطلب إعادة بناء</td>
+        </tr>
+        <tr>
+          <td>ثيم في الصفحات العميلة (useEffect)</td>
+          <td>حساسية hydration + حلقة قمع تحذير (symptom)</td>
+        </tr>
+        <tr>
+          <td>خط معالجة متسلسل بلا API</td>
+          <td>لا تفاعل في الوقت الحقيقي ولا إدخال مستخدم</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="notes">كل صف زواج مقايضة — لا قرار مجاني. المحكمة: هل المكسب الأخطر يخدم الأطروحة (SSG/content-first)؟ نعم.</div>
+</section>
+
+<!-- ============ SLIDE 30 : قيود معروفة ============ -->
+<section class="slide" data-title="قيود معروفة">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">القبول الواعي</div>
+    <h2 class="pagetitle">قيود معروفة</h2>
+    <ul class="cross">
+      <li>نطاق مكتوب يدوياً في 4-5 مواضع (غير مركزي).</li>
+      <li><code class="inline">src/i18n/request.ts:17</code> — <code class="inline">timeZone: 'Asia/Aden'</code> مكتوب يدوياً.</li>
+      <li>لا ترقيم صفحات — كل الـ69 على الصفحة الرئيسية.</li>
+      <li>ميزات push/sync <strong>ميتة</strong> (<span class="ref">public/sw.js:167-232</span>) — بلا واجهة برمجية لتفعيلها.</li>
+    </ul>
+    <p><span class="ref">src/i18n/request.ts:17</span> <span class="ref">src/app/[locale]/page.tsx:25</span></p>
+  </div>
+  <div class="notes">الاعتراف بالقيود يعزز الثقة. القيود الأربعة ليست أخطاء فادحة لكنها نقاط مراقبة. push/sync "ميتة" = كود مرسل قُصد به وظيفة مستقبلية بلا مستهلك اليوم.</div>
+</section>
+
+<!-- ============ SLIDE 31 : الخارطة الطريق ============ -->
+<section class="slide" data-title="الخارطة الطريق">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content">
+    <div class="kicker">الأولوية بالمخاطر</div>
+    <h2 class="pagetitle">الخارطة الطريق — risk-based</h2>
+    <div class="flow-diagram">
+      <div class="node"><span class="fn">1 · env config للنطاق/المنطقة</span><span class="step">الانتقال من الترميز الصلب</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">2 · ترقيم/أداء القائمة</span><span class="step">69 قصة على صفحة واحدة — تحدٍّ</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">3 · إزالة الشيفرة الميتة</span><span class="step">push/sync بدون مستهلك</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">4 · اختبارات مكوّنات</span><span class="step">RTL للواجهة — ملء فجوة التغطية</span></div>
+      <div class="edge">▼</div>
+      <div class="node"><span class="fn">5 · رفع CSP عبر nonces</span><span class="step">إغلاق unsafe-inline/eval</span></div>
+    </div>
+    <p class="muted">مرتّبة حسب المخاطر أولاً: نجعل الإعدادات قابلة للتهيئة، ثم الأداء، ثم النظافة، ثم الأمان بعد الموازنات.</p>
+  </div>
+  <div class="notes">سلّم أولويات المخاطر لا الرغبات. أشر إلى ربط #5 بـunsafe-inline من شريحة الأمان — قصة مغلقة عبر العرض.</div>
+</section>
+
+<!-- ============ SLIDE 32 : الخاتمة ============ -->
+<section class="slide" data-title="الخاتمة + أسئلة">
+  <div class="datapath"><div class="datapath-fill"></div></div>
+  <div class="content center">
+    <div class="kicker">الختام · أسئلة مفتوحة</div>
+    <h2 class="pagetitle">الخاتمة</h2>
+    <p class="lead" style="max-width:820px; margin:0 auto;">
+      بنينا أرشيفاً ثنائي اللغة يُدار به <strong>Markdown</strong> ويُعرض به <strong>SSG</strong> — بلا حالة خادم، وبأمان وشفافية في كل قرار.
+    </p>
+    <div class="datapath-rail" style="width:100%; max-width:900px; margin-top:2.5rem;">
+      <span class="seg hot">src/stories/*.md</span><span class="arrow">→</span>
+      <span class="seg">gray-matter</span><span class="arrow">→</span>
+      <span class="seg">remark</span><span class="arrow">→</span>
+      <span class="seg">sanitize</span><span class="arrow">→</span>
+      <span class="seg">SSG</span><span class="arrow">→</span>
+      <span class="end">HTML ⇒ sw.js</span>
+    </div>
+    <h3 style="margin-top:2.2rem;">أسئلة مفتوحة للنقاش</h3>
+    <div class="grid2" style="text-align:start;">
+      <div class="card"><h4>هل ننتقل لـISR أم نبقي SSG خالصاً؟</h4><p>تحديث محتوى دون إعادة بناء كاملة.</p></div>
+      <div class="card accent"><h4>HMR/البناء الضخم مع 138 ملف</h4><p>هل نحتاج تخزيناً مؤقتاً أعلى مستوى؟</p></div>
+      <div class="card"><h4>ما مستقبل قمع تحذير React 19؟</h4><p>حل جذري بدل معالجة الأعراض؟</p></div>
+      <div class="card accent"><h4>نمو القصص بلا CMS</h4><p>هل نجعل Markdown مقبولاً عند كتّاب غير تقنيين؟</p></div>
+    </div>
+  </div>
+  <div class="notes">اختم بعودة لمسار البيانات — الإطار كامل. ثم أطلق الأسئلة الأربعة المفتوحة كمناقشة عميقة مع الفريق، لا كاختبار.</div>
+</section>
+
+</div>
+
+<!-- ===== Controls ===== -->
+<div id="controls">
+  <div class="side">
+    <button id="prevBtn" type="button" aria-label="الشريحة السابقة">السابق</button>
+    <button id="nextBtn" type="button" aria-label="الشريحة التالية">التالي</button>
+  </div>
+  <div class="side">
+    <span id="count">1 / 1</span>
+  </div>
+  <div class="side">
+    <span class="hint">أزرار: ← → للتنقل · N ملاحظات · F ملء الشاشة · A نظرة عامة</span>
+    <button id="fullscreenBtn" type="button" aria-label="تبديل وضع ملء الشاشة" title="F">⛶</button>
+  </div>
+</div>
+
+<!-- ===== Overview ===== -->
+<div id="overview" role="dialog" aria-modal="true" aria-label="نظرة عامة على الشرائح">
+  <button class="close" id="overviewClose" type="button" aria-label="إغلاق النظرة العامة">إغلاق (A)</button>
+  <h3>نظرة عامة · جميع الشرائح</h3>
+  <div class="grid" id="overviewGrid"></div>
+</div>
+
+<!-- ===== Notes ===== -->
+<div id="notesPanel">
+  <button class="close-note" id="notesClose" type="button" aria-label="إغلاق الملاحظات">×</button>
+  <div class="label">ملاحظات المتحدث · Speaker Notes</div>
+  <div id="notesBody"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var current = 0;
+
+  var countEl = document.getElementById('count');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var fullscreenBtn = document.getElementById('fullscreenBtn');
+  var notesPanel = document.getElementById('notesPanel');
+  var notesBody = document.getElementById('notesBody');
+  var overview = document.getElementById('overview');
+  var overviewGrid = document.getElementById('overviewGrid');
+  var notesOpen = false;
+  var overviewOpen = false;
+
+  // ---- dynamic numbering: compute total from DOM ----
+  function updateCounter() {
+    countEl.textContent = (current + 1) + ' / ' + total;
+  }
+
+  function updateProgress() {
+    var fill = document.querySelector('.slide.active .datapath-fill');
+    if (fill) {
+      fill.style.width = ((current / (total - 1)) * 100) + '%';
+    }
+  }
+
+  function go(index, dir) {
+    if (index < 0 || index >= total) return;
+    slides[current].classList.remove('active', 'scrollable-right', 'scrollable-left');
+    current = index;
+    var c = slides[current];
+    c.classList.add('active');
+    if (dir === 1) {
+      c.classList.remove('scrollable-right');
+      c.classList.add('scrollable-left');
+    } else if (dir === -1) {
+      c.classList.remove('scrollable-left');
+      c.classList.add('scrollable-right');
+    }
+    updateCounter();
+    updateProgress();
+    updateNotes();
+    c.scrollTop = 0;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+  }
+
+  function updateNotes() {
+    var n = slides[current].querySelector('.notes');
+    notesBody.textContent = n ? n.textContent.trim() : '(لا ملاحظات لهذه الشريحة)';
+  }
+
+  function toggleNotes() {
+    notesOpen = !notesOpen;
+    notesPanel.classList.toggle('open', notesOpen);
+  }
+
+  function toggleOverview() {
+    overviewOpen = !overviewOpen;
+    overview.classList.toggle('open', overviewOpen);
+    if (overviewOpen) buildOverview();
+  }
+
+  function buildOverview() {
+    overviewGrid.innerHTML = '';
+    slides.forEach(function (slide, i) {
+      var b = document.createElement('button');
+      b.className = 'ov-slide';
+      b.setAttribute('data-index', i);
+      var num = document.createElement('span');
+      num.className = 'ov-num';
+      num.textContent = (i + 1);
+      var title = document.createElement('span');
+      title.textContent = slide.getAttribute('data-title') || ('شريحة ' + (i + 1));
+      b.appendChild(num);
+      b.appendChild(title);
+      b.addEventListener('click', function () {
+        go(i, i > current ? 1 : -1);
+        toggleOverview();
+      });
+      overviewGrid.appendChild(b);
+    });
+  }
+
+  // ---- keyboard ----
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { go(current + 1, 1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { go(current - 1, -1); e.preventDefault(); }
+    else if (e.key === 'n' || e.key === 'N') toggleNotes();
+    else if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+    else if (e.key === 'a' || e.key === 'A') toggleOverview();
+    else if (e.key === 'Escape' && overviewOpen) toggleOverview();
+    else if (e.key === 'Escape' && notesOpen) toggleNotes();
+  });
+
+  // ---- fullscreen ----
+  function toggleFullscreen() {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen().catch(function () {});
+    }
+  }
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+  // ---- buttons ----
+  prevBtn.addEventListener('click', function () { go(current - 1, -1); });
+  nextBtn.addEventListener('click', function () { go(current + 1, 1); });
+
+  var overviewClose = document.getElementById('overviewClose');
+  overviewClose.addEventListener('click', function () {
+    if (overviewOpen) toggleOverview();
+  });
+  var notesClose = document.getElementById('notesClose');
+  notesClose.addEventListener('click', function () {
+    if (notesOpen) toggleNotes();
+  });
+
+  // ---- touch swipe ----
+  var startX = 0;
+  document.addEventListener('touchstart', function (e) {
+    startX = e.changedTouches[0].clientX;
+  }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    var dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) < 50) return;
+    var isRtl = document.documentElement.dir === 'rtl';
+    if (isRtl) {
+      // RTL: mirror the reading direction — swipe-right → next, swipe-left → prev
+      if (dx > 0) { go(current + 1, 1); }
+      else { go(current - 1, -1); }
+    } else {
+      // LTR (unchanged)
+      if (dx < 0) { go(current + 1, 1); }  // swipe left → next
+      else { go(current - 1, -1); }        // swipe right → prev
+    }
+  }, { passive: true });
+
+  // ---- init ----
+  updateCounter();
+  updateProgress();
+  updateNotes();
+  prevBtn.disabled = true;
+})();
+</script>
+</body>
+</html>
