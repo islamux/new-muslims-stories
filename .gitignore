@@ -6,6 +6,7 @@ graphify-out/
 .env
 .env.local
 .vercel/
+presentation/
 .antigravitycli/
 /.github/agents/
 /.github/prompts/
