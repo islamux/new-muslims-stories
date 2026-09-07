@@ -1,0 +1,2089 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Muslim Stories — Technical Talk</title>
+    <style>
+      :root {
+        --green: #0f5c3e;
+        --green-dark: #093d29;
+        --green-light: #1f8a5e;
+        --cream: #faf6ec;
+        --cream-dark: #f0e9d8;
+        --accent: #c8a24a;
+        --accent-dark: #a9852f;
+        --ink: #1d241f;
+        --ink-soft: #4d5a51;
+        --line: #dcd2bc;
+        --display:
+          'Palatino Linotype', 'Book Antiqua', Palatino, 'Noto Naskh Arabic', 'Times New Roman',
+          serif;
+        --body: 'Segoe UI', Tahoma, 'Noto Naskh Arabic', Arial, sans-serif;
+        --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        --trans: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        font-family: var(--body);
+        background: var(--cream);
+        color: var(--ink);
+        overflow: hidden;
+      }
+
+      /* ===== Deck stage ===== */
+      #stage {
+        position: fixed;
+        inset: 0;
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 7vw, 7rem);
+        padding-top: clamp(2.5rem, 8vh, 5.5rem);
+        padding-bottom: clamp(4.5rem, 11vh, 6rem);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(0);
+        transition:
+          opacity var(--trans),
+          visibility var(--trans);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        background:
+          radial-gradient(1200px 600px at 85% -10%, rgba(15, 92, 62, 0.08), transparent 60%),
+          var(--cream);
+      }
+      .slide.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      .slide.scrollable-right {
+        animation: slideInR 0.4s var(--trans);
+      }
+      .slide.scrollable-left {
+        animation: slideInL 0.4s var(--trans);
+      }
+
+      @keyframes slideInR {
+        from {
+          transform: translateX(40px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideInL {
+        from {
+          transform: translateX(-40px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* ===== Signature: data path ===== */
+      .datapath {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: var(--cream-dark);
+        overflow: hidden;
+      }
+      .datapath-fill {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, var(--green), var(--green-light), var(--accent));
+        transition: width 0.6s ease;
+      }
+      .datapath-rail {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 0 2rem;
+        padding: 0.65rem 0.9rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: rgba(250, 246, 236, 0.75);
+        font-family: var(--mono);
+        font-size: clamp(0.6rem, 1.2vw, 0.78rem);
+        color: var(--ink-soft);
+        direction: ltr;
+        flex-wrap: wrap;
+        box-shadow: 0 1px 0 rgba(15, 92, 62, 0.06);
+      }
+      .datapath-rail .seg {
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        background: var(--cream-dark);
+        border: 1px solid transparent;
+        white-space: nowrap;
+      }
+      .datapath-rail .seg.hot {
+        background: var(--green);
+        color: #fff;
+        border-color: var(--green-dark);
+        box-shadow: 0 2px 6px rgba(15, 92, 62, 0.3);
+      }
+      .datapath-rail .seg.mid {
+        background: #e5efe8;
+        color: var(--green-dark);
+      }
+      .datapath-rail .arrow {
+        color: var(--accent-dark);
+        font-weight: bold;
+      }
+      .datapath-rail .end {
+        color: var(--green);
+        font-weight: 700;
+      }
+
+      /* ===== Content typography ===== */
+      .slide > .content {
+        max-width: 1050px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .kicker {
+        font-family: var(--mono);
+        font-size: clamp(0.65rem, 1.3vw, 0.8rem);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent-dark);
+        margin-bottom: 0.6rem;
+      }
+      h1,
+      h2.pagetitle {
+        font-family: var(--display);
+        font-weight: 700;
+        color: var(--green-dark);
+        line-height: 1.15;
+      }
+      h1 {
+        font-size: clamp(1.9rem, 5vw, 3.3rem);
+        margin-bottom: 0.75rem;
+      }
+      h2.pagetitle {
+        font-size: clamp(1.5rem, 4vw, 2.6rem);
+        margin-bottom: 1.1rem;
+        position: relative;
+      }
+      h2.pagetitle::after {
+        content: '';
+        display: block;
+        width: 64px;
+        height: 4px;
+        margin-top: 0.6rem;
+        background: linear-gradient(90deg, var(--green), var(--accent));
+        border-radius: 2px;
+      }
+      h3 {
+        font-family: var(--display);
+        font-size: 1.25rem;
+        color: var(--green);
+        margin: 1.3rem 0 0.5rem;
+      }
+      p,
+      li {
+        font-size: clamp(1rem, 2.1vw, 1.35rem);
+        line-height: 1.75;
+        color: var(--ink);
+      }
+      .lead {
+        font-size: clamp(1.05rem, 2.3vw, 1.5rem);
+        color: var(--ink-soft);
+        line-height: 1.8;
+      }
+      .muted {
+        color: var(--ink-soft);
+      }
+      strong {
+        color: var(--green-dark);
+      }
+      em {
+        color: var(--accent-dark);
+      }
+
+      .grid2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+        margin-top: 1.2rem;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-inline-start: 4px solid var(--green);
+        border-radius: 10px;
+        padding: 1.1rem 1.2rem;
+        box-shadow: 0 1px 3px rgba(15, 92, 62, 0.06);
+      }
+      .card.accent {
+        border-inline-start-color: var(--accent);
+      }
+      .card h4 {
+        font-family: var(--display);
+        color: var(--green-dark);
+        margin-bottom: 0.4rem;
+        font-size: 1.1rem;
+      }
+
+      /* stat strip */
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin: 1.2rem 0;
+      }
+      .stat {
+        flex: 1 1 140px;
+        text-align: center;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1rem 0.5rem;
+      }
+      .stat .num {
+        font-family: var(--display);
+        font-size: clamp(1.7rem, 4vw, 2.6rem);
+        font-weight: 700;
+        color: var(--green);
+        display: block;
+      }
+      .stat .lbl {
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+      }
+
+      /* code */
+      pre.code {
+        direction: ltr;
+        text-align: left;
+        background: #10241b;
+        color: #dff0e6;
+        border-radius: 10px;
+        padding: 1rem 1.2rem;
+        overflow-x: auto;
+        margin: 1rem 0;
+        font-family: var(--mono);
+        font-size: clamp(0.68rem, 1.4vw, 0.85rem);
+        line-height: 1.6;
+        box-shadow: 0 4px 14px rgba(15, 92, 62, 0.15);
+      }
+      pre.code .cm {
+        color: #70a88d;
+      }
+      code.inline {
+        font-family: var(--mono);
+        font-size: 0.9em;
+        background: #e5efe8;
+        color: var(--green-dark);
+        padding: 0.1em 0.4em;
+        border-radius: 5px;
+        direction: ltr;
+        unicode-bidi: embed;
+      }
+      .ref {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--accent-dark);
+        direction: ltr;
+        display: inline-block;
+        unicode-bidi: isolate;
+      }
+      .ref::before {
+        content: '↳ ';
+        color: var(--ink-soft);
+      }
+      .badge {
+        display: inline-block;
+        background: var(--green);
+        color: #fff;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        padding: 0.15rem 0.55rem;
+        border-radius: 20px;
+        margin-inline-end: 0.4rem;
+        vertical-align: middle;
+      }
+      .badge.warn {
+        background: var(--accent-dark);
+      }
+      .badge.red {
+        background: #b3403a;
+      }
+
+      ul.check li {
+        list-style: none;
+        position: relative;
+        padding-inline-start: 1.4rem;
+      }
+      ul.check li::before {
+        content: '✓';
+        position: absolute;
+        inset-inline-start: 0;
+        color: var(--green);
+        font-weight: bold;
+      }
+      ul.cross li {
+        list-style: none;
+        position: relative;
+        padding-inline-start: 1.4rem;
+      }
+      ul.cross li::before {
+        content: '✗';
+        position: absolute;
+        inset-inline-start: 0;
+        color: #b3403a;
+        font-weight: bold;
+      }
+
+      table.trade {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.2rem;
+        font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+      }
+      table.trade th,
+      table.trade td {
+        border: 1px solid var(--line);
+        padding: 0.65rem 0.9rem;
+        text-align: start;
+        vertical-align: top;
+      }
+      table.trade th {
+        background: var(--green);
+        color: #fff;
+        font-family: var(--display);
+      }
+      table.trade tr:nth-child(even) td {
+        background: #fff;
+      }
+
+      .center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 100%;
+      }
+      .center .datapath-rail {
+        max-width: 900px;
+      }
+      .subtitle {
+        font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+        color: var(--ink-soft);
+        margin-top: 0.4rem;
+      }
+
+      .demo-box {
+        border: 2px solid var(--accent);
+        background: linear-gradient(180deg, #fbf5e6, #f5ecd5);
+        border-radius: 14px;
+        padding: 2rem;
+        text-align: center;
+        margin-top: 1.5rem;
+      }
+      .demo-box .big {
+        font-family: var(--display);
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        color: var(--green-dark);
+      }
+
+      .quote {
+        direction: ltr;
+        text-align: left;
+        font-family: var(--display);
+        font-size: clamp(1.3rem, 3vw, 2rem);
+        color: var(--green-dark);
+        border-inline-start: 5px solid var(--accent);
+        padding-inline-start: 1.2rem;
+        margin: 1.2rem 0;
+      }
+
+      .flow-diagram {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        margin: 1.4rem 0;
+        direction: ltr;
+      }
+      .flow-diagram .node {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-inline-start: 4px solid var(--green);
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        font-family: var(--mono);
+        font-size: clamp(0.7rem, 1.4vw, 0.88rem);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+      .flow-diagram .node .step {
+        color: var(--ink-soft);
+        font-size: 0.7em;
+      }
+      .flow-diagram .node .fn {
+        color: var(--green-dark);
+        font-weight: bold;
+      }
+      .flow-diagram .edge {
+        color: var(--accent-dark);
+        text-align: center;
+        font-size: 0.8rem;
+        font-family: var(--mono);
+        line-height: 1;
+      }
+
+      /* ===== nav UI ===== */
+      #controls {
+        position: fixed;
+        inset-inline: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.7rem 1.4rem;
+        background: rgba(250, 246, 236, 0.92);
+        backdrop-filter: blur(6px);
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        color: var(--ink-soft);
+        z-index: 20;
+      }
+      #controls button {
+        background: var(--green);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.45rem 1rem;
+        font-family: var(--body);
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: background 0.2s;
+      }
+      #controls button:hover {
+        background: var(--green-light);
+      }
+      #controls button:disabled {
+        background: var(--line);
+        cursor: default;
+        color: #8b938d;
+      }
+      #controls .side {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      #count {
+        font-size: 0.9rem;
+        color: var(--green-dark);
+        font-weight: bold;
+      }
+      #controls .hint {
+        font-size: 0.7rem;
+        color: #8b938d;
+      }
+      #fullscreenBtn {
+        direction: ltr;
+      }
+
+      /* ===== overview grid ===== */
+      #overview {
+        position: fixed;
+        inset: 0;
+        background: rgba(13, 40, 28, 0.97);
+        z-index: 40;
+        display: none;
+        overflow-y: auto;
+        padding: 2.5rem;
+      }
+      #overview.open {
+        display: block;
+      }
+      #overview h3 {
+        color: #fff;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 1.6rem;
+      }
+      #overview .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 0.8rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      #overview .ov-slide {
+        background: rgba(255, 255, 255, 0.08);
+        color: #e8efe8;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 0.8rem;
+        cursor: pointer;
+        font-family: var(--body);
+        text-align: start;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        transition: background 0.2s;
+      }
+      #overview .ov-slide:hover {
+        background: rgba(255, 255, 255, 0.22);
+      }
+      #overview .ov-num {
+        color: var(--accent);
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        display: block;
+        margin-bottom: 0.2rem;
+      }
+      #overview .close {
+        position: fixed;
+        top: 1.2rem;
+        inset-inline-end: 1.5rem;
+        background: var(--accent);
+        color: #1d241f;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.1rem;
+        cursor: pointer;
+        font-family: var(--body);
+      }
+
+      /* ===== notes ===== */
+      #notesPanel {
+        position: fixed;
+        bottom: 3.4rem;
+        inset-inline-start: 1.2rem;
+        max-width: 420px;
+        background: #10241b;
+        color: #e8efe8;
+        border-radius: 10px;
+        padding: 1rem 1.2rem;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        z-index: 30;
+        display: none;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      }
+      #notesPanel.open {
+        display: block;
+      }
+      #notesPanel .label {
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        color: var(--accent);
+        letter-spacing: 0.1em;
+        margin-bottom: 0.3rem;
+      }
+      #notesPanel .close-note {
+        position: absolute;
+        top: 0.5rem;
+        inset-inline-end: 0.6rem;
+        background: none;
+        border: none;
+        color: #e8efe8;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      /* ===== print ===== */
+      @media print {
+        body {
+          overflow: visible;
+          background: #fff;
+        }
+        #controls,
+        #overview,
+        #notesPanel {
+          display: none !important;
+        }
+        /* keep the signature data-path rail (motif) visible; hide the thin progress bar only */
+        .datapath {
+          display: none !important;
+        }
+        .datapath-rail {
+          display: flex !important;
+          border: 1px solid #dcd2bc;
+          background: #faf6ec;
+          margin-bottom: 1.5rem;
+        }
+        .slide {
+          position: relative !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+          transform: none !important;
+          page-break-after: always;
+          min-height: 100vh;
+          margin: 0;
+          padding: 3rem !important;
+          box-shadow: none;
+          background: #fff !important;
+        }
+        .slide.active {
+          animation: none;
+        }
+        body {
+          overflow: visible;
+        }
+      }
+
+      /* ===== responsive ===== */
+      @media (max-width: 640px) {
+        .slide {
+          padding: 4.5rem 1.2rem 5rem;
+        }
+        #controls {
+          padding: 0.5rem 0.7rem;
+          font-size: 0.7rem;
+        }
+        #controls .hint {
+          display: none;
+        }
+        #prevBtn,
+        #nextBtn {
+          padding: 0.35rem 0.7rem;
+        }
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ===== reduced motion ===== */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+          animation: none !important;
+        }
+        .slide {
+          transition:
+            opacity 0s,
+            visibility 0s;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage">
+      <!-- ============ SLIDE 1 : Title ============ -->
+      <section class="slide active" data-title="Title">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="datapath-rail">
+          <span class="seg hot">src/stories/*.md</span><span class="arrow">→</span>
+          <span class="seg hot">gray-matter</span><span class="arrow">→</span>
+          <span class="seg hot">remark</span><span class="arrow">→</span>
+          <span class="seg hot">sanitize</span><span class="arrow">→</span>
+          <span class="seg hot">SSG</span><span class="arrow">→</span>
+          <span class="seg end">HTML ⇒ sw.js</span>
+        </div>
+        <div class="content center">
+          <div class="kicker">Technical Presentation · Technical Talk</div>
+          <h1>New Muslim Stories</h1>
+          <div class="subtitle">
+            A story of engineering decisions: migrating from Markdown to the web
+          </div>
+          <p class="muted" style="margin-top: 1.4rem">
+            Technical talk · 60 minutes · Next.js 16 · bilingual (en/ar) · SSG
+          </p>
+        </div>
+        <div class="notes">
+          Opening: introduce yourself and frame this as a journey of decisions. Turn on fullscreen
+          mode (F) and gesture at the keyboard. Point to the data-path rail at the top of the slide
+          — it will recur throughout the whole talk.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 2 : The Product ============ -->
+      <section class="slide" data-title="The Product">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">The Beginning · Foundation</div>
+          <h2 class="pagetitle">The Product</h2>
+          <p class="lead">
+            A digital library of true conversion-to-Islam stories, in two languages.
+          </p>
+          <div class="grid2">
+            <div class="card">
+              <h4>True stories</h4>
+              <p>
+                Stories of people who embraced Islam; curated, inspiring content — not
+                auto-generated.
+              </p>
+            </div>
+            <div class="card accent">
+              <h4>Bilingual</h4>
+              <p>Every story is published in English and Arabic (en/ar) in parallel.</p>
+            </div>
+            <div class="card">
+              <h4>Markdown-based</h4>
+              <p>
+                Each story is a simple <code class="inline">.md</code> file with frontmatter — no
+                database.
+              </p>
+            </div>
+            <div class="card accent">
+              <h4>Serverless</h4>
+              <p>SSG: a static site ready at the edge, no server state to manage by hand.</p>
+            </div>
+          </div>
+        </div>
+        <div class="notes">
+          Narrative note: at its core the product is an archive — not a highly interactive app. This
+          simplicity drives every later decision. Point out that each card reflects a decision we
+          will come back to.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 3 : The Problem ============ -->
+      <section class="slide" data-title="The Problem">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Motivation</div>
+          <h2 class="pagetitle">The Problem</h2>
+          <p class="lead">
+            The original stories are scattered across disconnected platforms, not bilingual, and
+            hard to archive or reach offline.
+          </p>
+          <div class="grid2">
+            <div class="card">
+              <h4>Fragmentation</h4>
+              <p>
+                No single trusted source for the stories, with consistent quality and a unified
+                narrative.
+              </p>
+            </div>
+            <div class="card accent">
+              <h4>Language barriers</h4>
+              <p>
+                Arabic and English audiences live in separate information spheres; we need paired
+                texts.
+              </p>
+            </div>
+            <div class="card">
+              <h4>Weak archiving</h4>
+              <p>
+                Sensitive religious content needs durability; do not depend on a dynamic server.
+              </p>
+            </div>
+            <div class="card accent">
+              <h4>Reading performance</h4>
+              <p>Story readers want instant loading, even on a weak network.</p>
+            </div>
+          </div>
+        </div>
+        <div class="notes">
+          Frame the problem before the solution: we did not start from "we need Next.js" — we
+          started from "we need a bilingual archive". The engineering solution came later, in
+          service of that need.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 4 : Numbers ============ -->
+      <section class="slide" data-title="Numbers">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Scale</div>
+          <h2 class="pagetitle">Verified Numbers</h2>
+          <div class="stats">
+            <div class="stat"><span class="num">138</span><span class="lbl">story files</span></div>
+            <div class="stat"><span class="num">69</span><span class="lbl">English</span></div>
+            <div class="stat"><span class="num">69</span><span class="lbl">Arabic</span></div>
+            <div class="stat"><span class="num">2</span><span class="lbl">locales</span></div>
+            <div class="stat"><span class="num">0</span><span class="lbl">API routes</span></div>
+          </div>
+          <p class="muted" style="margin-top: 0.2rem">
+            138 files inside <code class="inline">src/stories/</code> — every story is an English +
+            Arabic pair.
+          </p>
+          <ul class="check" style="margin-top: 1rem">
+            <li>
+              <strong>No API routes at all</strong> — generation happens entirely at build time
+              (SSG).
+            </li>
+            <li>Every page is prerendered into a static HTML file.</li>
+          </ul>
+        </div>
+        <div class="notes">
+          Quick reference numbers. Emphasize: "zero API routes" and "fully generated at build time".
+          This figure will come up again against later decisions (no server = no attack surface).
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 5 : The Thesis ============ -->
+      <section class="slide" data-title="The Thesis">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content center">
+          <div class="kicker">The Governing Thesis</div>
+          <h2 class="pagetitle">The Thesis</h2>
+          <div class="quote">
+            “Markdown as the database, SSG as the render layer, and no server state.”
+          </div>
+          <p class="lead muted" style="direction: ltr; text-align: center">
+            Markdown as the database · SSG as the render layer · no server state
+          </p>
+          <p style="margin-top: 1.4rem">
+            The single idea that governs every later decision:
+            <strong>the content is the source of truth, and rendering is derived from it.</strong>
+          </p>
+        </div>
+        <div class="notes">
+          This is the "mental moment": every technical detail that follows will be measured against
+          this sentence. If a decision conflicts with it, reconsider the decision.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 6 : What Follows ============ -->
+      <section class="slide" data-title="What Follows from the Thesis">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">What the Thesis Yields</div>
+          <h2 class="pagetitle">What Follows from the Thesis</h2>
+          <div class="grid2">
+            <div class="card">
+              <h4>Secure by design</h4>
+              <p>
+                No server means no endpoints to attack and no database to breach. The smallest
+                attack surface.
+              </p>
+            </div>
+            <div class="card accent">
+              <h4>Fast reading</h4>
+              <p>HTML ready at the edge; the first byte carries no server computation.</p>
+            </div>
+            <div class="card">
+              <h4>Simple archiving</h4>
+              <p>
+                Backup = the <code class="inline">src/stories</code> folder — git-able and copyable.
+              </p>
+            </div>
+            <div class="card accent">
+              <h4>Easy migration</h4>
+              <p>Content lives in Markdown, not locked inside a proprietary CMS.</p>
+            </div>
+          </div>
+          <h3>But — a declared trade-off</h3>
+          <p>
+            We lost dynamic administration and server-based interactivity. We will return to this
+            trade-off in the <em>Trade-offs</em> slide.
+          </p>
+        </div>
+        <div class="notes">
+          Do not sell the thesis without naming its price — technical credibility starts with
+          acknowledging the trade-off early.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 7 : Decisions 1 ============ -->
+      <section class="slide" data-title="Decisions 1: Next.js">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">The Decision Journey · 1/4</div>
+          <h2 class="pagetitle">Why Next.js 16 + App Router</h2>
+          <p class="lead">Migrating from 14→16, with every page a server component by default.</p>
+          <pre
+            class="code"
+          ><span class="cm">// package.json (condensed from dependencies + devDependencies)</span>
+{
+  <span class="cm">// :22</span> "next": "^16.2.9",
+  <span class="cm">// :25</span> "react": "^19.2.7",
+  <span class="cm">// :23</span> "next-intl": "^4.13.0",
+  <span class="cm">// :54 devDependencies</span> "tailwindcss": "^4.3.2"
+}</pre>
+          <p>
+            <span class="ref">package.json:22</span>
+            <span class="ref">docs/NEXTJS_16_MIGRATION_REPORT.md</span>
+          </p>
+          <ul class="check">
+            <li>
+              App Router → server components by default for every
+              <code class="inline">page.tsx</code>.
+            </li>
+            <li>First-class SSG via <code class="inline">generateStaticParams</code>.</li>
+          </ul>
+        </div>
+        <div class="notes">
+          Explain that we deliberately did not cover "why Next at all" — we take it as a given; it
+          is enough that v16 with App Router makes SSG + server-first the default behavior, which is
+          exactly what the thesis calls for.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 8 : Decisions 2 i18n ============ -->
+      <section class="slide" data-title="Decisions 2: i18n">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">The Decision Journey · 2/4</div>
+          <h2 class="pagetitle">i18n with next-intl, without an i18n folder</h2>
+          <pre class="code"><span class="cm">// src/i18n/routing.ts:3-9</span>
+export const routing = defineRouting({
+  locales: ['en', 'ar'],
+  defaultLocale: 'en',
+});</pre>
+          <pre class="code"><span class="cm">// src/proxy.ts:1-15 — Next 16 middleware rename</span>
+import createMiddleware from 'next-intl/middleware';
+export default createMiddleware({
+  locales: ['en', 'ar'],
+  defaultLocale: 'en',
+});
+export const config = { matcher: ['/((?!api|_next|.*\\..*).*)'] };</pre>
+          <p>
+            <span class="ref">src/i18n/routing.ts:3-9</span>
+            <span class="ref">src/i18n/request.ts</span> <span class="ref">src/proxy.ts:1-15</span>
+            <span class="ref">next.config.mjs:1-3</span>
+          </p>
+          <p class="muted">
+            In Next 16, middleware was renamed to proxy — we deal with the new reality.
+          </p>
+        </div>
+        <div class="notes">
+          A great technical point for a technical audience: the middleware → proxy rename in Next
+          16, and its effect on next-intl (a src/proxy.ts file instead of middleware.ts). Note the
+          config.matcher requirement.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 9 : Decisions 3 Markdown ============ -->
+      <section class="slide" data-title="Decisions 3: Markdown Pipeline">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">The Decision Journey · 3/4</div>
+          <h2 class="pagetitle">The Markdown Processing Pipeline</h2>
+          <p class="lead">
+            Why Markdown instead of a CMS/database? Because it is a version-controlled, git-able
+            copy of the content.
+          </p>
+          <pre class="code"><span class="cm">// src/lib/story-parser.ts:74-91</span>
+export async function parseStoryFile(fileName: string): Promise&lt;StoryData&gt; {
+  const slug = extractSlug(fileName);
+  const fullPath = path.join(storiesDirectory, fileName);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+  <span class="cm">// gray-matter</span>
+  const matterResult = matter(fileContents);
+  validateFrontmatter(matterResult.data, fileName);
+  <span class="cm">// remark</span>
+  const processedContent = await remark().use(html).process(matterResult.content);
+  const rawHtml = processedContent.toString();
+  <span class="cm">// sanitize</span>
+  const contentHtml = sanitizeHtmlServer(rawHtml);
+  return normalizeStoryData(matterResult.data, slug, contentHtml);
+}</pre>
+          <p>
+            <span class="ref">src/lib/story-parser.ts:74-91</span>
+            <span class="ref">:81 gray-matter</span> <span class="ref">:86 remark</span>
+            <span class="ref">:88 sanitize</span>
+          </p>
+        </div>
+        <div class="notes">
+          Explain the decision in order: gray-matter for frontmatter, remark for the transformation,
+          remark-html for HTML, then DOMPurify for sanitization. Why no CMS? Because the stories are
+          69 hand-written text files — a CMS would be an unneeded addition (YAGNI).
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 10 : Decisions 4 Tailwind ============ -->
+      <section class="slide" data-title="Decisions 4: Tailwind">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">The Decision Journey · 4/4</div>
+          <h2 class="pagetitle">Tailwind v4 + next-themes + PWA</h2>
+          <p class="lead">A modern UI + dark mode + install/offline — all without a server.</p>
+          <div class="grid2">
+            <div class="card">
+              <h4>Tailwind CSS v4</h4>
+              <p>
+                Utility generation at build time via
+                <code class="inline">@tailwindcss/postcss</code>.
+              </p>
+            </div>
+            <div class="card accent">
+              <h4>next-themes</h4>
+              <p>Dark/light mode via <code class="inline">attribute="class"</code>.</p>
+            </div>
+            <div class="card">
+              <h4>PWA</h4>
+              <p>Service Worker + manifest → install and offline.</p>
+            </div>
+            <div class="card accent">
+              <h4>Animation</h4>
+              <p>CSS transitions + Tailwind animations (no JS motion library).</p>
+            </div>
+          </div>
+          <p class="muted">The product remains a static site even with these decorative layers.</p>
+        </div>
+        <div class="notes">
+          This is the "face" slide — what the user sees. But keep the message: every embellishment
+          sits on top of SSG, not in place of it.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 11 : The Mental Model ============ -->
+      <section class="slide" data-title="The Mental Model">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Mental Model</div>
+          <h2 class="pagetitle">The Data Flow Diagram</h2>
+          <div class="flow-diagram">
+            <div class="node">
+              <span class="fn">src/stories/*.md</span
+              ><span class="step">138 files (69 en + 69 ar)</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">gray-matter</span
+              ><span class="step">strip frontmatter → metadata</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">remark (+ remark-html)</span
+              ><span class="step">Markdown → HTML string</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">sanitizeHtmlServer (DOMPurify)</span
+              ><span class="step">allow-list 24 tags / 7 attrs</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">story-service</span
+              ><span class="step">getSorted / allSlugs / featured</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">generateStaticParams</span
+              ><span class="step">SSG at build time → HTML</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">HTML ⇒ public/sw.js (cache)</span
+              ><span class="step">PWA offline</span>
+            </div>
+          </div>
+        </div>
+        <div class="notes">
+          The most important slide of the section: tying all the pieces into a single path. Draw it
+          live. This is the "data path" that appears as a rail atop every slide.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 12 : Experience 1 ============ -->
+      <section class="slide" data-title="Experience 1: Home Page">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Product Experience · 1/3</div>
+          <h2 class="pagetitle">The Home Page</h2>
+          <pre class="code"><span class="cm">// src/app/[locale]/page.tsx:46-49</span>
+const stories = await StoryService.getSortedStoriesData(locale);
+const featuredStories = stories.filter((s) => s.featured).slice(0, 6);
+
+return &lt;HomePageClient stories={stories} featuredStories={featuredStories} /&gt;;</pre>
+          <p><span class="ref">src/app/[locale]/page.tsx:47</span> <span class="ref">:46</span></p>
+          <ul class="check">
+            <li><strong>Hero</strong> — a title and an introductory line.</li>
+            <li><strong>Featured</strong> — up to 6 featured stories (hard cap).</li>
+            <li><strong>Story of the day</strong> — the daily story.</li>
+            <li><strong>All stories</strong> — the full list of 69.</li>
+          </ul>
+        </div>
+        <div class="notes">
+          Explain that the server component fetches the data and passes it down to a client
+          component. Note the slice(0,6) for the featured items.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 13 : Experience 2 ============ -->
+      <section class="slide" data-title="Experience 2: Story Page">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Product Experience · 2/3</div>
+          <h2 class="pagetitle">The Story Page</h2>
+          <p>
+            3 sections based on the HTML structure: <strong>Life before Islam</strong> →
+            <strong>The moment of guidance</strong> → <strong>Reflections</strong>.
+          </p>
+          <pre class="code"><span class="cm">// src/lib/story-sections.ts:12-28</span>
+export function getStorySections(contentHtml: string): StorySections {
+  const openings = contentHtml.split(/&lt;h[23][^&gt;]*&gt;/i);
+  const bodies: string[] = [];
+  for (let i = 1; i &lt; openings.length; i++) {
+    /* ... split on h2/h3, collect bodies */
+  }
+  return {
+    lifeBeforeIslam: bodies[0] ?? '',
+    momentOfGuidance: bodies[1] ?? '',
+    reflections: bodies.slice(2).join('\n'),
+  };
+}</pre>
+          <p>
+            <span class="ref">src/lib/story-sections.ts:12-28</span>
+            <span class="ref">[slug]/page.tsx:77-79</span>
+          </p>
+          <ul class="check">
+            <li>Previous/next navigation built on the index:</li>
+          </ul>
+          <pre
+            class="code"
+          ><span class="cm">// src/app/[locale]/stories/[slug]/page.tsx:77-79</span>
+const index = allStories.findIndex((s) => s.slug === slug);
+const prev = index &gt; 0 ? allStories[index - 1] : undefined;
+const next = index &gt;= 0 &amp;&amp; index &lt; allStories.length - 1 ? allStories[index + 1] : undefined;</pre>
+        </div>
+        <div class="notes">
+          A subtle point: getStorySections does not rely on a fixed array; it produces 3 sections
+          and degrades gracefully when headings are missing or extra. Show this by pointing at ??
+          ''.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 14 : Experience 3 ============ -->
+      <section class="slide" data-title="Experience 3: RTL/Theme/PWA">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Product Experience · 3/3</div>
+          <h2 class="pagetitle">RTL, Theme Toggle, PWA Install</h2>
+          <div class="grid2">
+            <div class="card">
+              <h4>RTL</h4>
+              <p>
+                <code class="inline">layout.tsx:40</code> —
+                <code class="inline">dir = locale === 'ar' ? 'rtl' : 'ltr'</code>.
+              </p>
+            </div>
+            <div class="card accent">
+              <h4>Theme Toggle</h4>
+              <p>
+                <code class="inline">src/components/ThemeToggle.tsx</code> — persists the choice at
+                the edge.
+              </p>
+            </div>
+            <div class="card">
+              <h4>PWA Install</h4>
+              <p>
+                <code class="inline">src/components/PWAInstall.tsx:20-119</code> — a guided install
+                dialog.
+              </p>
+            </div>
+            <div class="card accent">
+              <h4>Offline</h4>
+              <p>
+                <code class="inline">src/app/offline/page.tsx</code> — a bilingual offline page.
+              </p>
+            </div>
+          </div>
+          <p>
+            <span class="ref">src/app/[locale]/layout.tsx:40</span>
+            <span class="ref">src/components/PWAInstall.tsx:20-119</span>
+            <span class="ref">src/app/offline/page.tsx:21-49</span>
+          </p>
+        </div>
+        <div class="notes">
+          Mention that RTL is enabled via the dir attribute, not through inverted CSS rules.
+          PWAInstall is deferred by 5 seconds (PWAInstall.tsx:37) — a deliberate decision to avoid
+          annoying a new user.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 15 : Route Map ============ -->
+      <section class="slide" data-title="Route Map">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Technical Deep Dive · Routes</div>
+          <h2 class="pagetitle">The Route Map</h2>
+          <div class="grid2">
+            <div class="card">
+              <h4>/en · /ar</h4>
+              <p>The home page for each language (SSG).</p>
+            </div>
+            <div class="card">
+              <h4>/en|ar/stories/[slug]</h4>
+              <p>The story page — generated for every slug × locale.</p>
+            </div>
+            <div class="card">
+              <h4>/offline</h4>
+              <p>The standalone offline page.</p>
+            </div>
+            <div class="card accent">
+              <h4>dynamicParams=false</h4>
+              <p>Any path not prerendered returns a 404.</p>
+            </div>
+          </div>
+          <pre class="code"><span class="cm">// src/app/[locale]/stories/[slug]/page.tsx:7-11</span>
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return StoryService.getAllStorySlugs().map((entry) => entry.params);
+}</pre>
+          <p><span class="ref">[slug]/page.tsx:7</span> <span class="ref">:9-11</span></p>
+        </div>
+        <div class="notes">
+          dynamicParams=false gives route safety and SSG robustness: no random pages, only what we
+          actually generate. Explain its impact on SEO/indexing questions.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 16 : SSG ============ -->
+      <section class="slide" data-title="SSG">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Technical Deep Dive · SSG</div>
+          <h2 class="pagetitle">Static Site Generation</h2>
+          <ul class="check">
+            <li>
+              <code class="inline">setRequestLocale</code> in every page — enables static rendering
+              for next-intl.
+            </li>
+            <li>
+              <code class="inline">generateStaticParams</code> generates all the stories at build
+              time.
+            </li>
+            <li>
+              Prerendered metadata: <code class="inline">robots.ts</code> and
+              <code class="inline">sitemap.ts</code>.
+            </li>
+            <li>The result: ready HTML output for every known route.</li>
+          </ul>
+          <pre class="code"><span class="cm">// src/app/[locale]/layout.tsx:23-25</span>
+// Prerender both locales at build time (static rendering)
+export function generateStaticParams() {
+  return routing.locales.map((locale) =&gt; ({ locale }));
+}</pre>
+          <p>
+            <span class="ref">src/app/[locale]/layout.tsx:23-25</span> <span class="ref">:36</span>
+          </p>
+        </div>
+        <div class="notes">
+          Show the connection: setRequestLocale + generateStaticParams = complete metadata built at
+          build time for every locale. Not a word about CSR.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 17 : Server/Client boundary ============ -->
+      <section class="slide" data-title="Server/Client Boundary">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Technical Deep Dive · Server/Client Boundary</div>
+          <h2 class="pagetitle">The Server/Client Boundary</h2>
+          <div class="stats">
+            <div class="stat">
+              <span class="num">25</span><span class="lbl">'use client' files</span>
+            </div>
+            <div class="stat">
+              <span class="num">20+2+3</span><span class="lbl">components + ui + app-level</span>
+            </div>
+            <div class="stat">
+              <span class="num">16</span><span class="lbl">components using useTranslations</span>
+            </div>
+            <div class="stat"><span class="num">1</span><span class="lbl">hook</span></div>
+          </div>
+          <ul class="check">
+            <li>
+              Every <code class="inline">'use client'</code> file declares it on
+              <strong>line 1</strong>.
+            </li>
+            <li>Pages (<code class="inline">page.tsx</code>) are server components.</li>
+            <li>
+              <code class="inline">useTranslations</code> works on both client and server
+              (next-intl).
+            </li>
+          </ul>
+          <p class="muted">
+            The boundary is conceptual, not technical: only what needs interactivity / client state.
+          </p>
+        </div>
+        <div class="notes">
+          25 client files — mostly UI. Stress the transparency: we knew where the boundary sits and
+          why. All pages are server components by default, with no extra directives.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 18 : The Pipeline ============ -->
+      <section class="slide" data-title="The Pipeline">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Technical Deep Dive · Pipeline</div>
+          <h2 class="pagetitle">The Sequential Processing Pipeline</h2>
+          <pre class="code"><span class="cm">// src/lib/story-service.ts:16-20</span>
+const settled = await Promise.allSettled(
+  fileNames.map((fileName) =&gt; parseStoryFile(fileName))
+);
+settled
+  .filter((r): r is PromiseRejectedResult =&gt; r.status === 'rejected')
+  .forEach((r) =&gt; console.error('[StoryService] skipping unreadable story file:', r.reason));</pre>
+          <ul class="check">
+            <li>
+              <code class="inline">Promise.allSettled</code> skips broken files without taking down
+              the list (story-service.ts:16-20).
+            </li>
+            <li>
+              <code class="inline">normalizeStoryData</code> fails safely — every field has a
+              default (<span class="ref">story-parser.ts:25-51</span>).
+            </li>
+            <li>
+              <code class="inline">validateFrontmatter</code> warns and does not throw (<span
+                class="ref"
+                >:57-69</span
+              >).
+            </li>
+            <li>
+              Alphabetical sorting via <code class="inline">localeCompare</code> (<span class="ref"
+                >:28</span
+              >).
+            </li>
+          </ul>
+        </div>
+        <div class="notes">
+          A technical strength: fault tolerance without stopping the site. One broken file does not
+          take down the list — it is logged and skipped. This is a deliberate engineering decision,
+          not an accident.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 19 : Sanitization ============ -->
+      <section class="slide" data-title="Sanitization">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Technical Deep Dive · Sanitization</div>
+          <h2 class="pagetitle">Server-side Sanitization via DOMPurify</h2>
+          <pre class="code"><span class="cm">// src/lib/sanitize.ts:1-12</span>
+import { JSDOM } from 'jsdom';
+import createDOMPurify from 'dompurify';
+
+let purify: DOMPurify | null = null;
+function getDOMPurify(): DOMPurify {
+  if (!purify) {
+    purify = createDOMPurify(new JSDOM('').window);
+  }
+  return purify;
+}</pre>
+          <p>
+            <span class="ref">src/lib/sanitize.ts:17-43</span> allow-list of 24 tags
+            <span class="ref">:44</span> 7 attributes
+            <span class="ref">:45</span> ALLOW_DATA_ATTR=false
+          </p>
+          <p class="muted">
+            Rejecting <code class="inline">data-*</code> = shrinking injection surfaces via custom
+            attributes.
+          </p>
+        </div>
+        <div class="notes">
+          Point out that DOMPurify needs a real DOM, which is why we use jsdom on the server. Why it
+          matters: sanitize at build time, not request time → zero runtime server cost.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 20 : HYDRATION 1 ============ -->
+      <section class="slide" data-title="HYDRATION 1: Server Rendering">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">HYDRATION · 1/5</div>
+          <h2 class="pagetitle">What the Server Computes — and What It Cannot Reach</h2>
+          <p class="lead">
+            On the server there is no <code class="inline">window</code> and no
+            <code class="inline">localStorage</code>. Any code that reads either during the first
+            render will break and block hydration.
+          </p>
+          <pre class="code"><span class="cm">// src/app/[locale]/layout.tsx:43-50</span>
+&lt;html lang={locale} dir={dir} className={fontVariables} suppressHydrationWarning&gt;
+  ...
+  &lt;ThemeProvider attribute="class" defaultTheme="light" enableSystem
+    disableTransitionOnChange&gt;
+    ...</pre>
+          <p>
+            <span class="ref">src/app/[locale]/layout.tsx:43</span> <span class="ref">:45-50</span>
+          </p>
+          <p class="muted">
+            <code class="inline">suppressHydrationWarning</code> on
+            <code class="inline">&lt;html&gt;</code> because next-themes modifies class before/after
+            commit.
+          </p>
+        </div>
+        <div class="notes">
+          Open the HYDRATION section with the server's limits. Stress: this is not a courtesy — it
+          is understanding what the server can render; touching window during render is a bug.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 21 : HYDRATION 2 ============ -->
+      <section class="slide" data-title="HYDRATION 2: HTML Before JS">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">HYDRATION · 2/5</div>
+          <h2 class="pagetitle">HTML Arrives and Renders Before JS</h2>
+          <div class="flow-diagram">
+            <div class="node">
+              <span class="fn">Server renders HTML</span
+              ><span class="step">complete and standalone</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">HTML reaches browser</span
+              ><span class="step">renders immediately, no JS</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">JS bundle loads</span><span class="step">then React starts</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">Hydration</span
+              ><span class="step">attaching to the existing tree</span>
+            </div>
+          </div>
+          <p class="muted">
+            The client's first render must <strong>exactly match</strong> the server tree — that is
+            a requirement of hydration, not an option.
+          </p>
+        </div>
+        <div class="notes">
+          Explain the timeline: the user sees content before the JS fully loads. That is the origin
+          of server-side reading speed. Any difference from the server tree = mismatch.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 22 : HYDRATION 3 ============ -->
+      <section class="slide" data-title="HYDRATION 3: What It Is">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">HYDRATION · 3/5</div>
+          <h2 class="pagetitle">What Hydration Is</h2>
+          <p class="lead">
+            <strong>React attaching to the existing tree and adding event handlers</strong> — it is
+            not CSR starting from an empty DOM.
+          </p>
+          <div class="card accent" style="margin-top: 1rem">
+            <p>
+              <code class="inline">useEffect</code> runs <strong>after commit</strong>; at that
+              point it may read browser APIs and update state in a later render,
+              <em>legitimately</em>.
+            </p>
+          </div>
+          <p>
+            Any state update after mount — such as reading <code class="inline">window</code> or
+            <code class="inline">localStorage</code> — must happen inside
+            <code class="inline">useEffect</code>, not during the first render.
+          </p>
+        </div>
+        <div class="notes">
+          Core point: hydration ≠ CSR. React does not repaint everything; it attaches handlers onto
+          the existing nodes. The distinction is decisive for understanding mismatch errors.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 23 : HYDRATION 4 ============ -->
+      <section class="slide" data-title="HYDRATION 4: Mismatch">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">HYDRATION · 4/5</div>
+          <h2 class="pagetitle">A Wrong Example vs. the Correct Pattern</h2>
+          <h3>Wrong: reading localStorage during the first render</h3>
+          <p>
+            The server produces <code class="inline">dark</code> and the client
+            <code class="inline">light</code> → the mismatch throws a React warning.
+          </p>
+          <h3>The pattern actually used in the project</h3>
+          <pre class="code"><span class="cm">// src/hooks/useHasMounted.ts:1-12</span>
+import { useEffect, useState } from 'react';
+export const useHasMounted = () =&gt; {
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() =&gt; {
+    setHasMounted(true);
+  }, []);
+  return hasMounted;
+};</pre>
+          <p>
+            <span class="ref">ThemeToggle.tsx:48-57</span>
+            <span class="ref">src/hooks/useHasMounted.ts:1-12</span>
+            <span class="ref">LocalePersist.tsx:5-15</span>
+          </p>
+          <h3>However — honestly</h3>
+          <p>
+            <code class="inline">theme-console-filter.ts:1-17</code>
+            <strong>suppresses a React 19 warning</strong>. It treats the symptom, not the cause.
+          </p>
+        </div>
+        <div class="notes">
+          Transparency here builds credibility: the mounted gate is the right solution for this
+          exact pattern, but suppressing a React warning via a filter is symptom treatment that must
+          be re-evaluated regularly.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 24 : HYDRATION 5 ============ -->
+      <section class="slide" data-title="HYDRATION 5: Distinction + Testing">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">HYDRATION · 5/5</div>
+          <h2 class="pagetitle">Telling Them Apart + What Was Actually Tested</h2>
+          <div class="grid2">
+            <div class="card">
+              <h4>Mismatch on first render</h4>
+              <p><strong>Error</strong> — the server and client trees diverged before commit.</p>
+            </div>
+            <div class="card accent">
+              <h4>Update after useEffect</h4>
+              <p><strong>Expected</strong> — a later state update is valid after commit.</p>
+            </div>
+          </div>
+          <h3>What Was Actually Tested</h3>
+          <pre
+            class="code"
+          ><span class="cm">// src/lib/__tests__/theme-console-filter.test.ts + sanitize.test.ts</span>
+<span class="cm">// => proven by the existing tests (29 passing tests)</span></pre>
+          <p>
+            <span class="ref">src/lib/__tests__/theme-console-filter.test.ts</span>
+            <span class="ref">src/lib/__tests__/sanitize.test.ts</span>
+          </p>
+          <p class="muted">
+            The difference: an initial mismatch is a real error; an update after useEffect is
+            correct, intended behavior.
+          </p>
+        </div>
+        <div class="notes">
+          Do not claim more than we test. We test isolated logic (filter, sanitize), but we do not
+          run RTL over a full component hydration tree. Be candid about the testing limits.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 25 : PWA ============ -->
+      <section class="slide" data-title="PWA">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Technical Deep Dive · PWA</div>
+          <h2 class="pagetitle">Caching Strategies</h2>
+          <div class="grid2">
+            <div class="card">
+              <h4>Network-first — navigation</h4>
+              <p>
+                <span class="ref">public/sw.js:40-78</span> Try the network first, fall back to
+                cache.
+              </p>
+            </div>
+            <div class="card accent">
+              <h4>Stale-while-revalidate — stories</h4>
+              <p>
+                <span class="ref">public/sw.js:80-122</span> Serve the cached copy and refresh in
+                the background.
+              </p>
+            </div>
+            <div class="card">
+              <h4>Cache-first — assets</h4>
+              <p>
+                <span class="ref">public/sw.js:124-164</span> CSS/JS/images straight from the cache.
+              </p>
+            </div>
+            <div class="card accent">
+              <h4>Registration</h4>
+              <p>
+                <span class="ref">ServiceWorkerRegistration.tsx:5-37</span>
+                <code class="inline">useEffect</code> +
+                <code class="inline">navigator.serviceWorker.register('/sw.js')</code>.
+              </p>
+            </div>
+          </div>
+          <p>
+            <span class="ref">public/sw.js:1</span> cache v0.1.0 · precache
+            <span class="ref">:5-11</span>
+          </p>
+        </div>
+        <div class="notes">
+          Keep it simple: each strategy serves a different request type. SWR for stories is
+          deliberate because stories rarely change; network-first for navigation guarantees fresh
+          top-level pages.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 26 : Security ============ -->
+      <section class="slide" data-title="Security">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Technical Deep Dive · Security</div>
+          <h2 class="pagetitle">CSP Headers in next.config.mjs</h2>
+          <pre class="code"><span class="cm">// next.config.mjs:5-15</span>
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ');</pre>
+          <p><span class="ref">next.config.mjs:5-15</span> <span class="ref">:7</span></p>
+          <div class="card accent" style="margin-top: 1rem">
+            <h4>Honestly — a declared trade-off</h4>
+            <p>
+              <code class="inline">'unsafe-inline'</code> and
+              <code class="inline">'unsafe-eval'</code> in
+              <code class="inline">script-src</code> (line 7) <strong>weaken the CSP</strong>. They
+              are currently necessary for dev tooling / certain segments, but this is an
+              acknowledged cost on the roadmap.
+            </p>
+          </div>
+        </div>
+        <div class="notes">
+          Do not pretend the CSP is perfect. Name the weakness (unsafe-inline/eval) and tie it to
+          the roadmap slide — the goal is to lift it via nonces in the future.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 27 : Testing ============ -->
+      <section class="slide" data-title="Testing">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Technical Deep Dive · Testing</div>
+          <h2 class="pagetitle">Testing: vitest + 29 passing tests</h2>
+          <div class="stats">
+            <div class="stat"><span class="num">5</span><span class="lbl">test files</span></div>
+            <div class="stat">
+              <span class="num">29</span><span class="lbl">passing tests</span>
+            </div>
+            <div class="stat">
+              <span class="num">1</span><span class="lbl">vitest.config.ts</span>
+            </div>
+            <div class="stat">
+              <span class="num">jsdom</span><span class="lbl">environment</span>
+            </div>
+          </div>
+          <pre class="code"><span class="cm">// vitest.config.ts:1-16</span>
+export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
+  },
+  resolve: { alias: { '@': path.resolve(__dirname, './src') } },
+});</pre>
+          <p>
+            <code class="inline">pnpm test</code> ← 29 passing.
+            <span class="ref">vitest.config.ts:1-16</span>
+          </p>
+          <h3>What is not covered (honestly)</h3>
+          <ul class="cross">
+            <li>No RTL for testing UI components.</li>
+            <li>No E2E.</li>
+          </ul>
+        </div>
+        <div class="notes">
+          Focus on the coverage limits — credibility. We test pure logic (story-parser, sections,
+          sanitize, filter) with no UI component coverage and no E2E so far.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 28 : DEMO DIVIDER ============ -->
+      <section class="slide" data-title="Transition to the Live Demo">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content center">
+          <div class="kicker">Turning Point · DIVIDER</div>
+          <h2 class="pagetitle">To the Live Demo</h2>
+          <div class="demo-box">
+            <div class="big">We now move from explanation to a live walkthrough</div>
+            <p class="muted" style="margin-top: 0.8rem">
+              For the full demo scenario with the step-by-step script:
+              <code class="inline">presentation/demo-script.md</code>
+            </p>
+          </div>
+          <p class="muted" style="margin-top: 1.2rem">
+            Turn off fullscreen, open the browser, and start the live walkthrough.
+          </p>
+        </div>
+        <div class="notes">
+          This is the dividing line. Point to the scenario: open the script, try offline, theme
+          toggle, RTL, install. Return to the slides for questions.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 29 : Trade-offs ============ -->
+      <section class="slide" data-title="Trade-offs">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Engineering Balance</div>
+          <h2 class="pagetitle">Trade-offs</h2>
+          <table class="trade">
+            <thead>
+              <tr>
+                <th>What we gained</th>
+                <th>What we paid</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>SSG for a static archive</td>
+                <td>No database / no runtime dynamic content</td>
+              </tr>
+              <tr>
+                <td>Build-time generation + security by design</td>
+                <td>Content changes require a rebuild</td>
+              </tr>
+              <tr>
+                <td>Theming in client pages (useEffect)</td>
+                <td>Hydration sensitivity + a warning-suppression loop (symptom)</td>
+              </tr>
+              <tr>
+                <td>A sequential pipeline with no API</td>
+                <td>No real-time interaction and no user input</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="notes">
+          Every row is a trade-off marriage — no free decision. The verdict: does the greater gain
+          serve the thesis (SSG/content-first)? Yes.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 30 : Known Limitations ============ -->
+      <section class="slide" data-title="Known Limitations">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Deliberate Acceptance</div>
+          <h2 class="pagetitle">Known Limitations</h2>
+          <ul class="cross">
+            <li>Locale hard-coded in 4-5 places (not centralized).</li>
+            <li>
+              <code class="inline">src/i18n/request.ts:17</code> —
+              <code class="inline">timeZone: 'Asia/Aden'</code> hard-coded.
+            </li>
+            <li>No pagination — all 69 on the home page.</li>
+            <li>
+              push/sync features are <strong>dead</strong> (<span class="ref"
+                >public/sw.js:167-232</span
+              >) — no API surface to activate them.
+            </li>
+          </ul>
+          <p>
+            <span class="ref">src/i18n/request.ts:17</span>
+            <span class="ref">src/app/[locale]/page.tsx:25</span>
+          </p>
+        </div>
+        <div class="notes">
+          Admitting limitations builds trust. The four limitations are not fatal flaws but watch
+          points. push/sync are "dead": shipped code intended for a future feature with no consumer
+          today.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 31 : Roadmap ============ -->
+      <section class="slide" data-title="Roadmap">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content">
+          <div class="kicker">Risk-First Prioritization</div>
+          <h2 class="pagetitle">Roadmap — risk-based</h2>
+          <div class="flow-diagram">
+            <div class="node">
+              <span class="fn">1 · env config for locale/region</span
+              ><span class="step">Moving away from hard-coding</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">2 · Pagination / list performance</span
+              ><span class="step">69 stories on one page — a challenge</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">3 · Remove dead code</span
+              ><span class="step">push/sync with no consumer</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">4 · Component tests</span
+              ><span class="step">RTL for the UI — closing the coverage gap</span>
+            </div>
+            <div class="edge">▼</div>
+            <div class="node">
+              <span class="fn">5 · Raise CSP via nonces</span
+              ><span class="step">Closing unsafe-inline/eval</span>
+            </div>
+          </div>
+          <p class="muted">
+            Ordered by risk first: make the settings configurable, then performance, then hygiene,
+            then security after the trade-offs.
+          </p>
+        </div>
+        <div class="notes">
+          Prioritize risks, not wants. Point to the link of #5 with unsafe-inline from the Security
+          slide — a story closed across the deck.
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 32 : Conclusion ============ -->
+      <section class="slide" data-title="Conclusion + Questions">
+        <div class="datapath"><div class="datapath-fill"></div></div>
+        <div class="content center">
+          <div class="kicker">Closing · Open Questions</div>
+          <h2 class="pagetitle">Conclusion</h2>
+          <p class="lead" style="max-width: 820px; margin: 0 auto">
+            We built a bilingual archive managed with <strong>Markdown</strong> and rendered with
+            <strong>SSG</strong> — no server state, and with security and transparency in every
+            decision.
+          </p>
+          <div class="datapath-rail" style="width: 100%; max-width: 900px; margin-top: 2.5rem">
+            <span class="seg hot">src/stories/*.md</span><span class="arrow">→</span>
+            <span class="seg">gray-matter</span><span class="arrow">→</span>
+            <span class="seg">remark</span><span class="arrow">→</span>
+            <span class="seg">sanitize</span><span class="arrow">→</span>
+            <span class="seg">SSG</span><span class="arrow">→</span>
+            <span class="end">HTML ⇒ sw.js</span>
+          </div>
+          <h3 style="margin-top: 2.2rem">Open Questions for Discussion</h3>
+          <div class="grid2" style="text-align: start">
+            <div class="card">
+              <h4>Move to ISR or stay pure SSG?</h4>
+              <p>Content updates without a full rebuild.</p>
+            </div>
+            <div class="card accent">
+              <h4>HMR/the heavy build with 138 files</h4>
+              <p>Do we need higher-level caching?</p>
+            </div>
+            <div class="card">
+              <h4>What is the future of the React 19 warning suppression?</h4>
+              <p>A root fix instead of treating symptoms?</p>
+            </div>
+            <div class="card accent">
+              <h4>Growing the stories without a CMS</h4>
+              <p>Can we make Markdown acceptable to non-technical writers?</p>
+            </div>
+          </div>
+        </div>
+        <div class="notes">
+          Close by returning to the data path — the frame is complete. Then launch the four open
+          questions as a deep discussion with the team, not a test.
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== Controls ===== -->
+    <div id="controls">
+      <div class="side">
+        <button id="prevBtn" type="button" aria-label="Previous slide">Prev</button>
+        <button id="nextBtn" type="button" aria-label="Next slide">Next</button>
+      </div>
+      <div class="side">
+        <span id="count">1 / 1</span>
+      </div>
+      <div class="side">
+        <span class="hint">Keys: ← → to navigate · N notes · F fullscreen · A overview</span>
+        <button id="fullscreenBtn" type="button" aria-label="Toggle fullscreen mode" title="F">
+          ⛶
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== Overview ===== -->
+    <div id="overview" role="dialog" aria-modal="true" aria-label="Slides overview">
+      <button class="close" id="overviewClose" type="button" aria-label="Close the overview">
+        Close (A)
+      </button>
+      <h3>Overview · All slides</h3>
+      <div class="grid" id="overviewGrid"></div>
+    </div>
+
+    <!-- ===== Notes ===== -->
+    <div id="notesPanel">
+      <button class="close-note" id="notesClose" type="button" aria-label="Close the notes">
+        ×
+      </button>
+      <div class="label">Speaker Notes</div>
+      <div id="notesBody"></div>
+    </div>
+
+    <script>
+      (function () {
+        'use strict';
+
+        var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+        var total = slides.length;
+        var current = 0;
+
+        var countEl = document.getElementById('count');
+        var prevBtn = document.getElementById('prevBtn');
+        var nextBtn = document.getElementById('nextBtn');
+        var fullscreenBtn = document.getElementById('fullscreenBtn');
+        var notesPanel = document.getElementById('notesPanel');
+        var notesBody = document.getElementById('notesBody');
+        var overview = document.getElementById('overview');
+        var overviewGrid = document.getElementById('overviewGrid');
+        var notesOpen = false;
+        var overviewOpen = false;
+
+        // ---- dynamic numbering: compute total from DOM ----
+        function updateCounter() {
+          countEl.textContent = current + 1 + ' / ' + total;
+        }
+
+        function updateProgress() {
+          var fill = document.querySelector('.slide.active .datapath-fill');
+          if (fill) {
+            fill.style.width = (current / (total - 1)) * 100 + '%';
+          }
+        }
+
+        function go(index, dir) {
+          if (index < 0 || index >= total) return;
+          slides[current].classList.remove('active', 'scrollable-right', 'scrollable-left');
+          current = index;
+          var c = slides[current];
+          c.classList.add('active');
+          if (dir === 1) {
+            c.classList.remove('scrollable-right');
+            c.classList.add('scrollable-left');
+          } else if (dir === -1) {
+            c.classList.remove('scrollable-left');
+            c.classList.add('scrollable-right');
+          }
+          updateCounter();
+          updateProgress();
+          updateNotes();
+          c.scrollTop = 0;
+          prevBtn.disabled = current === 0;
+          nextBtn.disabled = current === total - 1;
+        }
+
+        function updateNotes() {
+          var n = slides[current].querySelector('.notes');
+          notesBody.textContent = n ? n.textContent.trim() : '(No notes for this slide)';
+        }
+
+        function toggleNotes() {
+          notesOpen = !notesOpen;
+          notesPanel.classList.toggle('open', notesOpen);
+        }
+
+        function toggleOverview() {
+          overviewOpen = !overviewOpen;
+          overview.classList.toggle('open', overviewOpen);
+          if (overviewOpen) buildOverview();
+        }
+
+        function buildOverview() {
+          overviewGrid.innerHTML = '';
+          slides.forEach(function (slide, i) {
+            var b = document.createElement('button');
+            b.className = 'ov-slide';
+            b.setAttribute('data-index', i);
+            var num = document.createElement('span');
+            num.className = 'ov-num';
+            num.textContent = i + 1;
+            var title = document.createElement('span');
+            title.textContent = slide.getAttribute('data-title') || 'Slide ' + (i + 1);
+            b.appendChild(num);
+            b.appendChild(title);
+            b.addEventListener('click', function () {
+              go(i, i > current ? 1 : -1);
+              toggleOverview();
+            });
+            overviewGrid.appendChild(b);
+          });
+        }
+
+        // ---- keyboard ----
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowRight') {
+            go(current + 1, 1);
+            e.preventDefault();
+          } else if (e.key === 'ArrowLeft') {
+            go(current - 1, -1);
+            e.preventDefault();
+          } else if (e.key === 'n' || e.key === 'N') toggleNotes();
+          else if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+          else if (e.key === 'a' || e.key === 'A') toggleOverview();
+          else if (e.key === 'Escape' && overviewOpen) toggleOverview();
+          else if (e.key === 'Escape' && notesOpen) toggleNotes();
+        });
+
+        // ---- fullscreen ----
+        function toggleFullscreen() {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else {
+            document.documentElement.requestFullscreen().catch(function () {});
+          }
+        }
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+        // ---- buttons ----
+        prevBtn.addEventListener('click', function () {
+          go(current - 1, -1);
+        });
+        nextBtn.addEventListener('click', function () {
+          go(current + 1, 1);
+        });
+
+        var overviewClose = document.getElementById('overviewClose');
+        overviewClose.addEventListener('click', function () {
+          if (overviewOpen) toggleOverview();
+        });
+        var notesClose = document.getElementById('notesClose');
+        notesClose.addEventListener('click', function () {
+          if (notesOpen) toggleNotes();
+        });
+
+        // ---- touch swipe ----
+        var startX = 0;
+        document.addEventListener(
+          'touchstart',
+          function (e) {
+            startX = e.changedTouches[0].clientX;
+          },
+          { passive: true },
+        );
+        document.addEventListener(
+          'touchend',
+          function (e) {
+            var dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) < 50) return;
+            var isRtl = document.documentElement.dir === 'rtl';
+            if (isRtl) {
+              // RTL: mirror the reading direction — swipe-right → next, swipe-left → prev
+              if (dx > 0) {
+                go(current + 1, 1);
+              } else {
+                go(current - 1, -1);
+              }
+            } else {
+              // LTR (unchanged)
+              if (dx < 0) {
+                go(current + 1, 1);
+              } // swipe left → next
+              else {
+                go(current - 1, -1);
+              } // swipe right → prev
+            }
+          },
+          { passive: true },
+        );
+
+        // ---- init ----
+        updateCounter();
+        updateProgress();
+        updateNotes();
+        prevBtn.disabled = true;
+      })();
+    </script>
+  </body>
+</html>
