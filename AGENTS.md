@@ -98,6 +98,13 @@ This repository hosts a Next.js 16 application for "New Muslim Stories", featuri
 - `public`: Static assets, PWA icons, `manifest.json`, `sw.js`.
 - `docs`: Project documentation, plans, blueprints, and tutorials.
 
+### Content Management (Adding a New Muslim)
+
+- **Before adding a new Muslim story, ALWAYS read `docs/existing-muslims.md`** — it indexes every Muslim already in `src/stories/` (slug, EN/AR names, country, previous religion). Check it for duplicates (match by name AND country) before creating any new story file.
+- **After adding, editing, or removing a story**, update `docs/existing-muslims.md` (add/edit/remove the matching row) so the index stays in sync.
+- Keep story frontmatter consistent: `firstName`/`author`, `country`, `previousReligion`, `language`, and an `-ar` counterpart for every English story (and vice versa).
+- Do NOT place non-story `.md` files inside `src/stories/` — the story parser reads every `.md` there (`getStoryFileNames`) and would break.
+
 ### GitHub Flow
 
 ```
