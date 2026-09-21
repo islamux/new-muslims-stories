@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:static": "STATIC_EXPORT=true next build && cp scripts/static-host/.htaccess out/.htaccess",
+    "build:static": "STATIC_EXPORT=true next build && cp scripts/static-host/.htaccess out/.htaccess && cp scripts/static-host/404.html out/404.html",
     "start": "next start",
     "test": "vitest run",
     "lint": "eslint . --max-warnings=999",
