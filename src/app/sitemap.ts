@@ -1,22 +1,19 @@
 import type { MetadataRoute } from 'next';
-import { StoryService } from '@/lib/story-service';
+import { storyRepository } from '@/lib/content';
 
 const BASE_URL = 'https://newmuslimstories.com';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const allSlugs = StoryService.getAllStorySlugs();
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const allSlugs = await storyRepository.getSlugEntries();
 
-  const storyUrls = allSlugs.flatMap(({ params }) => {
-    const { slug, locale } = params;
-    return [
-      {
-        url: `${BASE_URL}/${locale}/stories/${slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly' as const,
-        priority: 0.8,
-      },
-    ];
-  });
+  const storyUrls = allSlugs.flatMap(({ slug, locale }) => [
+    {
+      url: `${BASE_URL}/${locale}/stories/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    },
+  ]);
 
   const localeUrls = ['en', 'ar'].map((locale) => ({
     url: `${BASE_URL}/${locale}`,

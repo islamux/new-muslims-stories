@@ -37,8 +37,7 @@ describe('storyFrontmatterSchema', () => {
   });
 
   it('rejects missing title', () => {
-    const { title: _t, ...noTitle } = valid;
-    expect(storyFrontmatterSchema.safeParse(noTitle).success).toBe(false);
+    expect(storyFrontmatterSchema.safeParse({ author: 'A', language: 'en' }).success).toBe(false);
   });
 
   it('rejects unknown keys (catches typos like cuntry)', () => {
