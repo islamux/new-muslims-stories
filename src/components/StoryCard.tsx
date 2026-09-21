@@ -19,6 +19,7 @@ export default function StoryCard({ story }: StoryCardProps) {
   );
 
   const meta = [story.country, story.previousReligion].filter(Boolean).join(' · ');
+  const storyHref = `/stories/${story.slug}`;
 
   return (
     <article className="group relative flex h-full flex-col rounded-lg border border-line bg-panel/60 p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-gilt-400 hover:shadow-lg">
@@ -29,7 +30,7 @@ export default function StoryCard({ story }: StoryCardProps) {
       )}
       <h3 className="mb-2 font-heading text-lg font-bold leading-snug text-ink">
         <Link
-          href={`/stories/${story.slug}`}
+          href={storyHref}
           className="hover:text-emerald-700 dark:hover:text-emerald-300"
         >
           {story.title}
@@ -37,9 +38,13 @@ export default function StoryCard({ story }: StoryCardProps) {
       </h3>
       {meta && <p className="mb-3 font-sans text-xs text-ink-soft">{meta}</p>}
       <p className="mb-4 line-clamp-3 font-body text-sm text-ink-soft">{excerpt}</p>
-      <span className="mt-auto self-center font-sans text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+      <Link
+        href={storyHref}
+        aria-label={`${commonT('learnMore')}: ${story.title}`}
+        className="mt-auto self-center font-sans text-sm font-semibold text-emerald-700 hover:underline dark:text-emerald-300"
+      >
         {commonT('learnMore')}
-      </span>
+      </Link>
     </article>
   );
 }
