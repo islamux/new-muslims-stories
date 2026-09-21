@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>404 — New Muslim Stories</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f9fafb;
+        --fg: #111827;
+        --muted: #4b5563;
+        --accent: #16a34a;
+        --accent-fg: #ffffff;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #111827;
+          --fg: #f9fafb;
+          --muted: #9ca3af;
+          --accent: #22c55e;
+          --accent-fg: #052e16;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        text-align: center;
+      }
+      .wrap {
+        max-width: 28rem;
+      }
+      .code {
+        margin: 0 0 1rem;
+        font-size: 3.75rem;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--accent);
+      }
+      h1 {
+        margin: 0 0 1rem;
+        font-size: 1.875rem;
+        font-weight: 700;
+      }
+      p {
+        margin: 0 0 2rem;
+        font-size: 1.125rem;
+        color: var(--muted);
+      }
+      a.home {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        text-decoration: none;
+        color: var(--accent-fg);
+        background: var(--accent);
+      }
+      a.home:hover {
+        filter: brightness(0.9);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <p class="code">404</p>
+      <h1 id="title">Page Not Found</h1>
+      <p id="desc">The page you are looking for could not be found.</p>
+      <a class="home" id="home" href="/en/">Back to Homepage</a>
+    </div>
+    <script>
+      (function () {
+        var stored;
+        try {
+          stored = localStorage.getItem('locale');
+        } catch (e) {}
+        var lang = stored || (navigator.language || 'en').toLowerCase().slice(0, 2);
+        if (lang === 'ar') {
+          document.documentElement.lang = 'ar';
+          document.documentElement.dir = 'rtl';
+          document.getElementById('title').textContent = 'الصفحة غير موجودة';
+          document.getElementById('desc').textContent =
+            'الصفحة التي تبحث عنها غير موجودة.';
+          var home = document.getElementById('home');
+          home.textContent = 'العودة إلى الصفحة الرئيسية';
+          home.setAttribute('href', '/ar/');
+        }
+      })();
+    </script>
+  </body>
+</html>

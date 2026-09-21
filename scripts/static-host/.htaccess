@@ -1,0 +1,24 @@
+# Hostinger (Apache/LiteSpeed) config for the static export in out/.
+# Copied into out/ by `pnpm build:static`. Not used by the Vercel build.
+
+# No middleware in a static export: send the bare root to the default locale.
+RedirectMatch 302 ^/$ /en/
+
+# Next emits a single root 404.html for static export.
+ErrorDocument 404 /404.html
+
+# Security headers mirroring next.config.mjs (lost when headers() is skipped).
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "DENY"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+</IfModule>
+
+# Immutable hashed build assets. <Location> is not valid in .htaccess
+# (per-directory) context, so match the path via SetEnvIf instead.
+SetEnvIf Request_URI "^/_next/static/" next_static_asset
+<IfModule mod_headers.c>
+Header set Cache-Control "public, max-age=31536000, immutable" env=next_static_asset
+</IfModule>
