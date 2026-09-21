@@ -22,20 +22,26 @@ const securityHeaders = [
   { key: 'Content-Security-Policy', value: CSP },
 ];
 
+const isStaticExport = process.env.STATIC_EXPORT === 'true';
+
 const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 768, 1024, 1280, 1536],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    ...(isStaticExport && { unoptimized: true }),
   },
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: securityHeaders,
-      },
-    ];
-  },
+  ...(isStaticExport && { output: 'export', trailingSlash: true }),
+  ...(!isStaticExport && {
+    async headers() {
+      return [
+        {
+          source: '/(.*)',
+          headers: securityHeaders,
+        },
+      ];
+    },
+  }),
 };
 
 export default withNextIntl(nextConfig);

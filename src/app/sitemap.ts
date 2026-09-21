@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { storyRepository } from '@/lib/content';
 
+export const dynamic = 'force-static';
+
 const BASE_URL = 'https://newmuslimstories.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
