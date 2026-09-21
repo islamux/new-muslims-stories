@@ -4,115 +4,49 @@ import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
 import { sanitizeHtmlServer } from '@/lib/sanitize';
-import type { StoryData, Locale } from '@/types';
+import type { Locale, StoryData } from '@/types';
+import { storyFrontmatterSchema } from './content/schema';
 
-const storiesDirectory = path.join(process.cwd(), 'src/stories');
-
-/**
- * Extracts slug from filename (handles both en and ar locales)
- */
 function extractSlug(fileName: string): string {
-  const isArabic = fileName.endsWith('-ar.md');
-  return isArabic ? fileName.replace(/-ar\.md$/, '') : fileName.replace(/\.md$/, '');
+  return fileName.replace(/-ar\.md$/, '').replace(/\.md$/, '');
+}
+
+export function extractSlugAndLocale(fileName: string): { slug: string; locale: Locale } {
+  return { slug: extractSlug(fileName), locale: fileName.endsWith('-ar.md') ? 'ar' : 'en' };
 }
 
 /**
- * Coerces raw frontmatter into a complete, typed StoryData.
- * Pure and side-effect-free so it can be unit-tested without the filesystem.
- * Fails safe: every field has a sane default so downstream code never sees
- * `undefined` (which previously caused `.toLowerCase()` crashes).
+ * Parses a single markdown story file into a validated, typed StoryData.
+ * Invalid frontmatter throws — content bugs fail the build instead of
+ * shipping silently with defaulted fields.
  */
-export function normalizeStoryData(
-  raw: Record<string, unknown>,
-  slug: string,
-  contentHtml: string,
-): StoryData {
-  const str = (v: unknown): string => (typeof v === 'string' ? v : '');
-  const numOrNull = (v: unknown): number | null =>
-    typeof v === 'number' && Number.isFinite(v) ? v : null;
-  const language: Locale = raw.language === 'ar' ? 'ar' : 'en';
-  const firstName = str(raw.firstName) || str(raw.author);
+export async function parseStoryFile(fileName: string, storiesDir: string): Promise<StoryData> {
+  const fileContents = fs.readFileSync(path.join(storiesDir, fileName), 'utf8');
+  const { data, content } = matter(fileContents);
 
-  return {
-    slug,
-    contentHtml,
-    title: str(raw.title),
-    firstName,
-    author: str(raw.author),
-    age: numOrNull(raw.age),
-    country: str(raw.country),
-    previousReligion: str(raw.previousReligion),
-    profilePhoto: str(raw.profilePhoto),
-    image: str(raw.image),
-    featured: raw.featured === true,
-    language,
-    date: str(raw.date),
-  };
-}
-
-/**
- * Validates frontmatter has required fields. Logs warnings for missing data
- * but does not throw — normalizeStoryData provides safe defaults.
- */
-function validateFrontmatter(
-  data: Record<string, unknown>,
-  fileName: string,
-): void {
-  const missing: string[] = [];
-  if (!data.title) missing.push('title');
-  if (!data.author && !data.firstName) missing.push('author/firstName');
-  if (!data.language) missing.push('language');
-  if (!data.country) missing.push('country');
-  if (missing.length > 0) {
-    console.warn(`[story-parser] ${fileName}: missing frontmatter fields: ${missing.join(', ')}`);
+  const parsed = storyFrontmatterSchema.safeParse(data);
+  if (!parsed.success) {
+    const issues = parsed.error.issues
+      .map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`)
+      .join('; ');
+    throw new Error(`[story-parser] ${fileName}: invalid frontmatter -> ${issues}`);
   }
-}
+  const fm = parsed.data;
 
-/**
- * Parses a single markdown file into StoryData
- */
-export async function parseStoryFile(fileName: string): Promise<StoryData> {
-  const slug = extractSlug(fileName);
-
-  const fullPath = path.join(storiesDirectory, fileName);
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
-
-  // Use gray-matter to parse the story metadata section
-  const matterResult = matter(fileContents);
-
-  validateFrontmatter(matterResult.data, fileName);
-
-  // Use remark to convert markdown into HTML string
-  const processedContent = await remark().use(html).process(matterResult.content);
-  const rawHtml = processedContent.toString();
-  const contentHtml = sanitizeHtmlServer(rawHtml);
-
-  return normalizeStoryData(matterResult.data, slug, contentHtml);
-}
-
-/**
- * Gets all story file names from the stories directory
- */
-export function getStoryFileNames(): string[] {
-  return fs.readdirSync(storiesDirectory).filter((name) => name.endsWith('.md'));
-}
-
-/**
- * Extracts slug and locale from filename
- */
-export function extractSlugAndLocale(fileName: string): { slug: string; locale: string } {
-  const isArabic = fileName.endsWith('-ar.md');
-  const slug = extractSlug(fileName);
-  const locale = isArabic ? 'ar' : 'en';
-
-  return { slug, locale };
-}
-
-/**
- * Checks if a story file exists for given slug and locale
- */
-export function storyFileExists(slug: string, locale: string): boolean {
-  const fileName = locale === 'ar' ? `${slug}-ar.md` : `${slug}.md`;
-  const fullPath = path.join(storiesDirectory, fileName);
-  return fs.existsSync(fullPath);
+  const processed = await remark().use(html).process(content);
+  return {
+    slug: extractSlug(fileName),
+    contentHtml: sanitizeHtmlServer(processed.toString()),
+    title: fm.title,
+    firstName: fm.firstName ?? fm.author,
+    author: fm.author,
+    age: fm.age ?? null,
+    country: fm.country ?? '',
+    previousReligion: fm.previousReligion ?? '',
+    profilePhoto: fm.profilePhoto ?? '',
+    image: fm.image ?? '',
+    featured: fm.featured ?? false,
+    language: fm.language,
+    date: fm.date ?? '',
+  };
 }

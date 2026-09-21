@@ -1,13 +1,14 @@
 import type { Locale } from '@/types';
 import type { Metadata } from 'next';
-import { StoryService } from '@/lib/story-service';
+import { notFound } from 'next/navigation';
+import { storyRepository } from '@/lib/content';
 import StoryContentDisplay from '@/components/StoryContentDisplay';
 import { setRequestLocale } from 'next-intl/server';
 
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  return StoryService.getAllStorySlugs().map((entry) => entry.params);
+  return storyRepository.getSlugEntries();
 }
 
 export async function generateMetadata({
@@ -17,46 +18,46 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug, locale } = await params;
 
-  try {
-    const story = await StoryService.getStoryData(slug, locale);
-    const excerpt = story.contentHtml
-      .replace(/<[^>]*>/g, '')
-      .trim()
-      .slice(0, 160);
-
-    const baseUrl = 'https://newmuslimstories.com';
-    const storyUrl = `${baseUrl}/${locale}/stories/${slug}`;
-
-    return {
-      title: story.title,
-      description: excerpt || `${story.firstName}'s story of guidance to Islam.`,
-      openGraph: {
-        title: story.title,
-        description: excerpt,
-        url: storyUrl,
-        siteName: 'New Muslim Stories',
-        type: 'article',
-        publishedTime: story.date || undefined,
-        authors: [story.author],
-        ...(story.image && { images: [{ url: story.image, alt: story.title }] }),
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: story.title,
-        description: excerpt,
-        ...(story.image && { images: [story.image] }),
-      },
-      alternates: {
-        canonical: storyUrl,
-        languages: {
-          en: `${baseUrl}/en/stories/${slug}`,
-          ar: `${baseUrl}/ar/stories/${slug}`,
-        },
-      },
-    };
-  } catch {
+  const story = await storyRepository.getBySlug(slug, locale);
+  if (!story) {
     return { title: 'Story Not Found' };
   }
+
+  const excerpt = story.contentHtml
+    .replace(/<[^>]*>/g, '')
+    .trim()
+    .slice(0, 160);
+
+  const baseUrl = 'https://newmuslimstories.com';
+  const storyUrl = `${baseUrl}/${locale}/stories/${slug}`;
+
+  return {
+    title: story.title,
+    description: excerpt || `${story.firstName}'s story of guidance to Islam.`,
+    openGraph: {
+      title: story.title,
+      description: excerpt,
+      url: storyUrl,
+      siteName: 'New Muslim Stories',
+      type: 'article',
+      publishedTime: story.date || undefined,
+      authors: [story.author],
+      ...(story.image && { images: [{ url: story.image, alt: story.title }] }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: story.title,
+      description: excerpt,
+      ...(story.image && { images: [story.image] }),
+    },
+    alternates: {
+      canonical: storyUrl,
+      languages: {
+        en: `${baseUrl}/en/stories/${slug}`,
+        ar: `${baseUrl}/ar/stories/${slug}`,
+      },
+    },
+  };
 }
 
 // Story page component
@@ -70,9 +71,13 @@ export default async function StoryPage({
   setRequestLocale(locale);
 
   const [story, allStories] = await Promise.all([
-    StoryService.getStoryData(slug, locale),
-    StoryService.getSortedStoriesData(locale),
+    storyRepository.getBySlug(slug, locale),
+    storyRepository.getAll(locale),
   ]);
+
+  if (!story) {
+    notFound();
+  }
 
   const index = allStories.findIndex((s) => s.slug === slug);
   const prev = index > 0 ? allStories[index - 1] : undefined;

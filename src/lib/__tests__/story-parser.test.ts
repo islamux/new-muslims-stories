@@ -1,5 +1,23 @@
-import { describe, it, expect } from 'vitest';
-import { extractSlugAndLocale, storyFileExists, normalizeStoryData } from '@/lib/story-parser';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import { extractSlugAndLocale, parseStoryFile } from '@/lib/story-parser';
+
+let dir: string;
+
+const writeStory = (fileName: string, frontmatter: string, body = '## Body\n\nSome content.') => {
+  const fullPath = path.join(dir, fileName);
+  fs.writeFileSync(fullPath, `---\n${frontmatter}\n---\n\n${body}`);
+};
+
+beforeAll(() => {
+  dir = fs.mkdtempSync(path.join(os.tmpdir(), 'story-parser-'));
+});
+
+afterAll(() => {
+  fs.rmSync(dir, { recursive: true, force: true });
+});
 
 describe('story-parser', () => {
   describe('extractSlugAndLocale', () => {
@@ -14,51 +32,70 @@ describe('story-parser', () => {
     });
   });
 
-  describe('storyFileExists', () => {
-    it('returns false for non-existent story', () => {
-      const result = storyFileExists('non-existent-story', 'en');
-      expect(result).toBe(false);
-    });
-  });
+  describe('parseStoryFile', () => {
+    it('parses a valid story into StoryData', async () => {
+      writeStory(
+        'david.md',
+        'title: "David: A Journey"\nauthor: "David Jones"\nfirstName: "David"\nlanguage: "en"\ndate: "2020-01-02"\nimage: "/images/david.webp"\nprofilePhoto: "/images/david.webp"\nage: 40\ncountry: "UK"\npreviousReligion: "Christianity"\nfeatured: true',
+        '## Before\n\nLife before.',
+      );
 
-  describe('normalizeStoryData', () => {
-    it('falls back to author when firstName is missing', () => {
-      const result = normalizeStoryData({ author: 'David' }, 'david-story', '<p>x</p>');
-      expect(result.firstName).toBe('David');
-      expect(result.author).toBe('David');
-    });
+      const story = await parseStoryFile('david.md', dir);
 
-    it('prefers firstName over author when both are present', () => {
-      const result = normalizeStoryData({ firstName: 'Ahmed', author: 'Ahmed Ali' }, 'ahmed', '');
-      expect(result.firstName).toBe('Ahmed');
-    });
-
-    it('defaults missing string fields to empty string (not undefined)', () => {
-      const result = normalizeStoryData({}, 'slug', '');
-      expect(result.title).toBe('');
-      expect(result.country).toBe('');
-      expect(result.previousReligion).toBe('');
-      expect(result.profilePhoto).toBe('');
-      expect(result.image).toBe('');
-      expect(result.firstName).toBe('');
+      expect(story).toMatchObject({
+        slug: 'david',
+        title: 'David: A Journey',
+        firstName: 'David',
+        author: 'David Jones',
+        age: 40,
+        country: 'UK',
+        previousReligion: 'Christianity',
+        profilePhoto: '/images/david.webp',
+        image: '/images/david.webp',
+        featured: true,
+        language: 'en',
+        date: '2020-01-02',
+      });
+      expect(story.contentHtml).toContain('<h2>Before</h2>');
     });
 
-    it('coerces age: null to null and invalid age to null', () => {
-      expect(normalizeStoryData({ age: null }, 's', '').age).toBeNull();
-      expect(normalizeStoryData({ age: 'old' }, 's', '').age).toBeNull();
-      expect(normalizeStoryData({ age: 34 }, 's', '').age).toBe(34);
+    it('falls back to author for firstName and defaults missing fields', async () => {
+      writeStory('minimal.md', 'title: "Minimal"\nauthor: "Only Author"\nlanguage: "en"');
+
+      const story = await parseStoryFile('minimal.md', dir);
+
+      expect(story.firstName).toBe('Only Author');
+      expect(story.age).toBeNull();
+      expect(story.country).toBe('');
+      expect(story.previousReligion).toBe('');
+      expect(story.profilePhoto).toBe('');
+      expect(story.image).toBe('');
+      expect(story.featured).toBe(false);
+      expect(story.date).toBe('');
     });
 
-    it('treats featured as true only when explicitly true', () => {
-      expect(normalizeStoryData({ featured: true }, 's', '').featured).toBe(true);
-      expect(normalizeStoryData({ featured: false }, 's', '').featured).toBe(false);
-      expect(normalizeStoryData({}, 's', '').featured).toBe(false);
+    it('rejects a story missing required frontmatter', async () => {
+      writeStory('no-title.md', 'author: "No Title"\nlanguage: "en"');
+
+      await expect(parseStoryFile('no-title.md', dir)).rejects.toThrow(
+        /invalid frontmatter -> title/,
+      );
     });
 
-    it('validates language to en|ar, defaulting unknown values to en', () => {
-      expect(normalizeStoryData({ language: 'ar' }, 's', '').language).toBe('ar');
-      expect(normalizeStoryData({ language: 'fr' }, 's', '').language).toBe('en');
-      expect(normalizeStoryData({}, 's', '').language).toBe('en');
+    it('rejects unknown frontmatter keys', async () => {
+      writeStory('typo.md', 'title: "Typo"\nauthor: "A"\nlanguage: "en"\ncuntry: "UK"');
+
+      await expect(parseStoryFile('typo.md', dir)).rejects.toThrow(
+        /invalid frontmatter -> .*cuntry/,
+      );
+    });
+
+    it('rejects a malformed date', async () => {
+      writeStory('bad-date.md', 'title: "Bad"\nauthor: "A"\nlanguage: "en"\ndate: "1977/12/23"');
+
+      await expect(parseStoryFile('bad-date.md', dir)).rejects.toThrow(
+        /invalid frontmatter -> date/,
+      );
     });
   });
 });
