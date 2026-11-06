@@ -9,7 +9,9 @@
 
 1. Read `docs/existing-muslims.md` (the index: slug, EN/AR names, country, previous religion).
 2. Read `docs/muslim-names.md` (the names-only roster).
-3. Count sanity: every story is an EN + `-ar` pair (one exception: `joram-van-klaveren.md`).
+3. Count sanity: every story is an EN + `-ar` pair. One *naming* exception: `joram-van-klaveren.md`
+   has no `-story` suffix (its AR pair `joram-van-klaveren-ar.md` exists) — neither file is matched
+   by the `ls` globs below, which therefore show 98/98 plus the joram pair = 99 stories.
    `ls src/stories/*-story.md | wc -l` must equal `ls src/stories/*-story-ar.md | wc -l`.
 
 ## Step 1 — Candidate shortlist + duplicate check (no writing yet)
