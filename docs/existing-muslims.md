@@ -4,7 +4,7 @@ This file is a reference list of every new Muslim currently present in `src/stor
 
 Extracted automatically from the stories' frontmatter (English + Arabic). The (EN) name comes from the English file, the (AR) name from the Arabic file, and the country and previous religion from the English file.
 
-_Total Muslims: 99_ — _Last updated: 2026-09-20_
+_Total Muslims: 104_ — _Last updated: 2026-11-06_
 
 | slug | Name (EN) | Name (AR) | Country | Previous Religion |
 |------|-----------|------------|---------|--------------------|
@@ -51,6 +51,7 @@ _Total Muslims: 99_ — _Last updated: 2026-09-20_
 | giancarlo-esposito-story | Giancarlo Esposito | جيانكارلو إسبوزيتو | United States | Catholicism |
 | hamid-algar-story | Hamid Algar | حامد الجار | United Kingdom | None |
 | hamza-story | Hamza | حمزة |  | Christianity |
+| hamza-yusuf-story | Hamza Yusuf | حمزة يوسف | United States | Christianity |
 | husain-nfl-story | Husain | حسين | United States | Islam (non-practicing) |
 | ibrahim-story | Muhammad Ibrahim | محمد إبراهيم | United Kingdom | None |
 | ismael-story | Ismail (formerly Louie) | إسماعيل (كان يُعرف بلوي) |  |  |
@@ -70,11 +71,13 @@ _Total Muslims: 99_ — _Last updated: 2026-09-20_
 | louis-story | Louis | لويس | Brazil |  |
 | madeline-story | Madeline | مادلين | Sweden | Christianity |
 | mahdi-story | Mahdi | مهدي | Belgium | Christianity |
+| mahershala-ali-story | Mahershala Ali | ماهرشالا علي | United States | Christianity |
 | mahmoud-abdul-rauf-story | Mahmoud Abdul-Rauf | محمود عبد الرؤوف | United States | Christianity |
 | malcolm-x-story | Malcolm | مالكوم | United States | Nation of Islam |
 | margaret-story | Margaret | مارجريت | United Kingdom | Christianity |
 | mark-story | Mark | مارك | France | Christianity |
 | marmaduke-pickthall-story | Marmaduke Pickthall | محمد مارمادوك بكتال | United Kingdom | Christianity |
+| martin-lings-story | Martin Lings | مارتن لنجز | United Kingdom | Protestantism |
 | martin-story | Martin | مارتن |  |  |
 | marven-story | Marvin | مارفن | United Kingdom | None |
 | maryam-jameelah-story | Maryam Jameelah | مريم جميلة | United States | Judaism |
@@ -103,7 +106,9 @@ _Total Muslims: 99_ — _Last updated: 2026-09-20_
 | sizare-story | César | سيزر | Brazil | Christianity |
 | sonny-bill-williams-story | Sonny Bill Williams | سوني بيل ويليامز | New Zealand | Christianity |
 | stephen-jackson-story | Stephen Jackson | ستيفن جاكسون | United States | Christianity |
+| susan-carland-story | Susan Carland | سوزان كارلاند | Australia | Christianity |
 | timothy-winter-story | Timothy Winter | تيموثي وينتر | United Kingdom | Christianity |
 | titus-burckhardt-story | Titus Burckhardt | تيتوس بوركهاردت | Switzerland | Christianity |
+| wayne-parnell-story | Wayne Parnell | واين بارنيل | South Africa | Christianity |
 | yusuf-islam-story | Yusuf Islam (Cat Stevens) | يوسف إسلام (كات ستيفنز) |  |  |
 | yvonne-ridley-story | Yvonne Ridley | إيفون ريدلي | United Kingdom | Christianity |
