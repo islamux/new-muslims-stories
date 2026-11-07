@@ -5,7 +5,7 @@ Owner approved the candidate pair: **Suhaib Webb + Ingrid Mattson**.
 
 ## Stories (2 pilots)
 
-Done (pilot, awaiting owner review):
+Done (pilot, approved by owner):
 - [x] suhaib-webb-story (.md + -ar.md), conversion 1992, United States, Christianity
 - [x] ingrid-mattson-story (.md + -ar.md), conversion 1987, Canada, Agnosticism
 
@@ -36,11 +36,12 @@ Duplicate checks performed against `docs/existing-muslims.md`, `docs/muslim-name
 
 ## Docs / Verify / Ship
 
-- [ ] Owner reviews the two pilots for style and tone
-- [ ] `node scripts/regenerate-doc-indexes.mjs`; confirm `_Total Muslims: 101_` and additions only
-- [ ] Slug-pairing check: 100 EN + 100 AR `-story` files (+ joram pair = 101 stories)
-- [ ] `pnpm lint`
-- [ ] `pnpm test`
-- [ ] `pnpm build`
-- [ ] Commit, push `content-batch4-stories`, open PR, owner merges (never delete branch)
+- [x] Owner reviewed and approved the two pilots for style and tone
+- [x] `node scripts/regenerate-doc-indexes.mjs`; `_Total Muslims: 101_`, additions only
+- [x] Slug-pairing check: 100 EN + 100 AR `-story` files (+ joram pair = 101 stories)
+- [x] `pnpm lint` clean
+- [x] `pnpm test` 49/49 passing
+- [x] `pnpm build` passing (210 static pages)
+- [x] Commit, push `content-batch4-stories`, open PR #38
+- [ ] Owner merges PR #38 (never delete branch)
 - [ ] Run global finish-work skill: gates in order, owner confirmation before merge
