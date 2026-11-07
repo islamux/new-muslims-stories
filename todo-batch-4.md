@@ -43,5 +43,5 @@ Duplicate checks performed against `docs/existing-muslims.md`, `docs/muslim-name
 - [x] `pnpm test` 49/49 passing
 - [x] `pnpm build` passing (210 static pages)
 - [x] Commit, push `content-batch4-stories`, open PR #38
-- [ ] Owner merges PR #38 (never delete branch)
-- [ ] Run global finish-work skill: gates in order, owner confirmation before merge
+- [x] Owner merged PR #38 (branch preserved)
+- [x] Run global finish-work skill: gates in order, owner confirmation before merge
