@@ -4,7 +4,7 @@ This file is a reference list of every new Muslim currently present in `src/stor
 
 Extracted automatically from the stories' frontmatter (English + Arabic). The (EN) name comes from the English file, the (AR) name from the Arabic file, and the country and previous religion from the English file.
 
-_Total Muslims: 104_ — _Last updated: 2026-11-06_
+_Total Muslims: 106_ — _Last updated: 2026-11-22_
 
 | slug | Name (EN) | Name (AR) | Country | Previous Religion |
 |------|-----------|------------|---------|--------------------|
@@ -54,6 +54,7 @@ _Total Muslims: 104_ — _Last updated: 2026-11-06_
 | hamza-yusuf-story | Hamza Yusuf | حمزة يوسف | United States | Christianity |
 | husain-nfl-story | Husain | حسين | United States | Islam (non-practicing) |
 | ibrahim-story | Muhammad Ibrahim | محمد إبراهيم | United Kingdom | None |
+| ingrid-mattson-story | Ingrid Mattson | إنغريد ماتسون | Canada | Agnosticism |
 | ismael-story | Ismail (formerly Louie) | إسماعيل (كان يُعرف بلوي) |  |  |
 | jader-story | Jader | جادير | Brazil | Islam (non-practicing) |
 | jeffrey-lang-story | Jeffrey Lang | جيفري لانغ | United States | Atheism |
@@ -106,6 +107,7 @@ _Total Muslims: 104_ — _Last updated: 2026-11-06_
 | sizare-story | César | سيزر | Brazil | Christianity |
 | sonny-bill-williams-story | Sonny Bill Williams | سوني بيل ويليامز | New Zealand | Christianity |
 | stephen-jackson-story | Stephen Jackson | ستيفن جاكسون | United States | Christianity |
+| suhaib-webb-story | Suhaib Webb | صهيب ويب | United States | Christianity |
 | susan-carland-story | Susan Carland | سوزان كارلاند | Australia | Christianity |
 | timothy-winter-story | Timothy Winter | تيموثي وينتر | United Kingdom | Christianity |
 | titus-burckhardt-story | Titus Burckhardt | تيتوس بوركهاردت | Switzerland | Christianity |

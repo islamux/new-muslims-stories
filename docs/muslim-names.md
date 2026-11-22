@@ -42,6 +42,7 @@ Hamid Algar
 Hamza
 Hamza Yusuf
 Husain
+Ingrid Mattson
 Ismail (formerly Louie)
 Jader
 Jeffrey Lang
@@ -95,6 +96,7 @@ Shakir
 Sinéad O'Connor
 Sonny Bill Williams
 Stephen Jackson
+Suhaib Webb
 Susan Carland
 Timothy Winter
 Titus Burckhardt
