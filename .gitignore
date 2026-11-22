@@ -6,8 +6,12 @@ graphify-out/
 .superpowers/
 *.tsbuildinfo
 .env
+.env.*
 .env.local
-.vercel/
+*.pem
+*.key
+*.p12
+*.pfx.vercel/
 presentation/
 .antigravitycli/
 /.github/agents/
