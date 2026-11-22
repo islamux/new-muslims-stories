@@ -40,6 +40,7 @@ Gai Eaton
 Giancarlo Esposito
 Hamid Algar
 Hamza
+Hamza Yusuf
 Husain
 Ingrid Mattson
 Ismail (formerly Louie)
@@ -60,12 +61,14 @@ Kristiane
 Louis
 Madeline
 Mahdi
+Mahershala Ali
 Mahmoud Abdul-Rauf
 Malcolm
 Margaret
 Mark
 Marmaduke Pickthall
 Martin
+Martin Lings
 Marvin
 Maryam Jameelah
 Mikael
@@ -94,8 +97,10 @@ Sinéad O'Connor
 Sonny Bill Williams
 Stephen Jackson
 Suhaib Webb
+Susan Carland
 Timothy Winter
 Titus Burckhardt
+Wayne Parnell
 Yusuf Estes
 Yusuf Islam (Cat Stevens)
 Yvonne Ridley
